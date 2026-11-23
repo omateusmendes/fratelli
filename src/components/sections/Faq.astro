@@ -1,0 +1,35 @@
+---
+/** Lista de dúvidas frequentes com <details> nativo (acessível e sem JavaScript). */
+import type { FaqItem } from '@/data/faq';
+
+interface Props {
+  items: FaqItem[];
+  /** Abre a primeira pergunta por padrão. */
+  openFirst?: boolean;
+  class?: string;
+}
+
+const { items, openFirst = false, class: className } = Astro.props;
+---
+
+<div class:list={['border-t border-line', className]}>
+  {
+    items.map((item, i) => (
+      <details class="faq-item group border-b border-line" open={openFirst && i === 0}>
+        <summary class="flex cursor-pointer list-none items-start justify-between gap-6 py-6 [&::-webkit-details-marker]:hidden">
+          <h3 class="font-serif text-[1.2rem] leading-snug text-ink transition-colors group-hover:text-gold-dark sm:text-[1.3rem]">
+            {item.question}
+          </h3>
+          <span
+            class="relative mt-1.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-gold/60 transition-transform duration-300 group-open:rotate-45"
+            aria-hidden="true"
+          >
+            <span class="absolute h-px w-2.5 bg-gold-dark" />
+            <span class="absolute h-2.5 w-px bg-gold-dark" />
+          </span>
+        </summary>
+        <p class="max-w-2xl pb-7 pr-12 text-[1.02rem] text-stone">{item.answer}</p>
+      </details>
+    ))
+  }
+</div>

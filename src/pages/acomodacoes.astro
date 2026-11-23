@@ -1,0 +1,100 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/sections/PageHero.astro';
+import { pageHeroPhotos } from '@/data/heroes';
+import RoomFeature from '@/components/sections/RoomFeature.astro';
+import SectionHeading from '@/components/sections/SectionHeading.astro';
+import Button from '@/components/ui/Button.astro';
+import CtaBand from '@/components/sections/CtaBand.astro';
+import { rooms } from '@/data/rooms';
+import { buildWhatsAppUrl } from '@/lib/whatsapp';
+---
+
+<BaseLayout
+  title="Acomodações | Fratelli Premium Hotel — Elói Mendes, MG"
+  description="Quarto Duplo (28 m²), Quarto Deluxe (36 m²) e Suíte com Hidromassagem (40 m²) no Fratelli Premium Hotel, Centro de Elói Mendes (MG)."
+  breadcrumb="Acomodações"
+>
+  <PageHero
+    photo={pageHeroPhotos.acomodacoes}
+    crumb="Acomodações"
+    eyebrow="Acomodações"
+    title="Encontre a acomodação ideal para sua estadia."
+    lead="Escolha entre Quarto Duplo, Quarto Deluxe e Suíte com Hidromassagem, com metragens entre 28 e 40 m²."
+  >
+    <Button href={buildWhatsAppUrl()} icon="whatsapp">Consultar disponibilidade</Button>
+  </PageHero>
+
+  <nav aria-label="Categorias" class="border-b border-line bg-paper">
+    <ul class="container-site grid grid-cols-3">
+      {
+        rooms.map((room, i) => (
+          <li class:list={[i > 0 && 'border-l border-line']}>
+            <a
+              href={`#${room.slug}`}
+              class="group flex h-full flex-col items-center gap-1 px-2 py-6 text-center transition-colors hover:bg-sand sm:py-8"
+            >
+              <span class="font-serif text-[1.9rem] leading-none text-ink sm:text-[2.6rem]">
+                {room.size}
+                <span class="text-[1rem] text-gold-dark sm:text-[1.2rem]">m²</span>
+              </span>
+              <span class="text-[0.75rem] font-bold uppercase tracking-[0.14em] text-stone sm:text-[0.78rem] sm:tracking-[0.18em]">
+                {room.name}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  {rooms.map((room, i) => <RoomFeature room={room} index={i} reverse={i % 2 === 1} />)}
+
+  <section aria-labelledby="compare-title" class="bg-cream">
+    <div class="container-site py-20 sm:py-24 lg:py-28">
+      <SectionHeading
+        id="compare-title"
+        eyebrow="Comparativo"
+        title="As três categorias lado a lado"
+        intro="Todas as acomodações recebem até 2 hóspedes. Precisa de algo específico? A recepção confirma os detalhes de cada unidade."
+      />
+      <div class="mt-12 overflow-x-auto">
+        <table class="w-full min-w-[36rem] border-collapse text-left">
+          <caption class="sr-only">Comparativo entre as acomodações do Fratelli Premium Hotel</caption>
+          <thead>
+            <tr class="border-b border-ink">
+              <th scope="col" class="py-4 pr-4 text-[0.75rem] font-bold uppercase tracking-[0.16em] text-stone">Acomodação</th>
+              <th scope="col" class="px-4 py-4 text-[0.75rem] font-bold uppercase tracking-[0.16em] text-stone">Área</th>
+              <th scope="col" class="px-4 py-4 text-[0.75rem] font-bold uppercase tracking-[0.16em] text-stone">Camas</th>
+              <th scope="col" class="py-4 pl-4 text-[0.75rem] font-bold uppercase tracking-[0.16em] text-stone">Hóspedes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              rooms.map((room) => (
+                <tr class="border-b border-line">
+                  <th scope="row" class="py-5 pr-4 font-serif text-[1.2rem] font-medium text-ink">
+                    <a
+                      href={`#${room.slug}`}
+                      class="relative transition-colors before:absolute before:inset-x-0 before:-inset-y-3 before:content-[''] hover:text-gold-dark"
+                    >
+                      {room.name}
+                    </a>
+                  </th>
+                  <td class="px-4 py-5 text-charcoal">{room.size} m²</td>
+                  <td class="px-4 py-5 text-charcoal">{room.beds}</td>
+                  <td class="py-5 pl-4 text-charcoal">Até {room.guests}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-6 max-w-2xl text-[0.9rem] text-muted">
+        Equipamentos como climatização podem variar entre unidades da mesma categoria. Consulte a recepção ao reservar.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand title="Escolheu sua acomodação?" text="Fale com a recepção para consultar datas, valores e disponibilidade." />
+</BaseLayout>

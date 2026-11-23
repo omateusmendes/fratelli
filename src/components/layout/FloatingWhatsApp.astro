@@ -1,0 +1,45 @@
+---
+/**
+ * Atalho flutuante para o WhatsApp (somente celular/tablet).
+ * Some quando já há um botão de WhatsApp visível na tela: topo da home,
+ * faixa final de contato e rodapé (elementos com [data-hide-float] ou <footer>).
+ */
+import { buildWhatsAppUrl } from '@/lib/whatsapp';
+import WhatsAppIcon from '@/components/icons/WhatsAppIcon.astro';
+---
+
+<a
+  href={buildWhatsAppUrl()}
+  target="_blank"
+  rel="noopener"
+  data-float-whatsapp
+  class="fixed bottom-4 right-4 z-30 inline-flex size-14 items-center justify-center rounded-full bg-ink text-gold-light ring-1 ring-gold/50 shadow-[0_10px_28px_-8px_rgba(31,29,30,0.55)] transition-[opacity,transform,color,background-color] duration-300 hover:bg-charcoal hover:text-cream data-[hidden]:pointer-events-none data-[hidden]:translate-y-3 data-[hidden]:opacity-0 lg:hidden"
+  style="margin-bottom: env(safe-area-inset-bottom);"
+>
+  <WhatsAppIcon size={26} />
+  <span class="sr-only">Conversar com a recepção pelo WhatsApp (abre em nova aba)</span>
+</a>
+
+<script>
+  const button = document.querySelector<HTMLAnchorElement>('[data-float-whatsapp]');
+  const targets = document.querySelectorAll('footer, [data-hide-float]');
+
+  if (button && targets.length) {
+    const visible = new Set<Element>();
+    const update = () => {
+      const hide = visible.size > 0;
+      button.toggleAttribute('data-hidden', hide);
+      button.tabIndex = hide ? -1 : 0;
+      if (hide) button.setAttribute('aria-hidden', 'true');
+      else button.removeAttribute('aria-hidden');
+    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => (entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target)));
+        update();
+      },
+      { threshold: 0.15 },
+    );
+    targets.forEach((t) => observer.observe(t));
+  }
+</script>

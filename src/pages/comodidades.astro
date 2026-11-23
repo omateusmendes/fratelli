@@ -1,0 +1,97 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/sections/PageHero.astro';
+import { pageHeroPhotos } from '@/data/heroes';
+import AmenityGrid from '@/components/sections/AmenityGrid.astro';
+import SectionHeading from '@/components/sections/SectionHeading.astro';
+import Icon, { type IconName } from '@/components/icons/Icon.astro';
+import CtaBand from '@/components/sections/CtaBand.astro';
+import { amenities } from '@/data/amenities';
+import { hotel } from '@/data/hotel';
+import { commonPhotos } from '@/data/photos';
+import Media from '@/components/ui/Media.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Button from '@/components/ui/Button.astro';
+
+const schedule: { icon: IconName; label: string; value: string }[] = [
+  { icon: 'door', label: 'Check-in', value: hotel.schedule.checkIn },
+  { icon: 'clock', label: 'Check-out', value: hotel.schedule.checkOut },
+  { icon: 'concierge', label: 'Recepção', value: hotel.schedule.reception },
+];
+---
+
+<BaseLayout
+  title="Comodidades | Fratelli Premium Hotel — Elói Mendes, MG"
+  description="Wi-Fi gratuito, estacionamento privativo, recepção 24 horas, restaurante, serviço de quarto, elevador e limpeza diária no Fratelli Premium Hotel."
+  breadcrumb="Comodidades"
+>
+  <PageHero
+    photo={pageHeroPhotos.comodidades}
+    crumb="Comodidades"
+    eyebrow="Estrutura e comodidades"
+    title="Comodidades para uma hospedagem mais tranquila."
+    lead="Uma estrutura preparada para oferecer praticidade do check-in ao check-out."
+  />
+
+  <section aria-labelledby="amenities-title" class="bg-cream">
+    <div class="container-site py-16 sm:py-20 lg:py-24">
+      <h2 id="amenities-title" class="sr-only">Comodidades do hotel</h2>
+      <AmenityGrid items={amenities} />
+    </div>
+  </section>
+
+  <!-- Destaque: café da manhã e restaurante -->
+  <section aria-labelledby="cafe-highlight-title" class="bg-paper">
+    <div class="container-site grid gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:items-center lg:gap-16 lg:py-28">
+      <div class="lg:col-span-7">
+        <div class="aspect-[4/3] overflow-hidden rounded-[3px] lg:aspect-[16/11]">
+          <Media
+            image={commonPhotos.salaoCafe.src}
+            alt={commonPhotos.salaoCafe.alt}
+            label="Café da manhã"
+            sizes="(min-width: 1024px) 58vw, 100vw"
+            class="h-full w-full"
+          />
+        </div>
+      </div>
+      <div class="lg:col-span-5">
+        <Eyebrow>Café da manhã e restaurante</Eyebrow>
+        <h2 id="cafe-highlight-title" class="mt-6 text-h2">Comece o dia com sabor e tranquilidade.</h2>
+        <p class="mt-6 text-[1.08rem] text-stone">
+          Café da manhã em estilo buffet, com variedade para começar a manhã antes dos compromissos ou passeios, e
+          restaurante com culinária brasileira.
+        </p>
+        <div class="mt-9">
+          <Button href="/cafe-da-manha/" variant="text" trailingIcon="arrow-right">Conheça o café da manhã</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Horários" class="bg-cream">
+    <div class="container-site grid gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:gap-16 lg:py-28">
+      <div class="lg:col-span-5">
+        <SectionHeading
+          eyebrow="Horários"
+          title="Para planejar sua chegada"
+          intro="Se precisar chegar ou sair fora destes horários, fale com a recepção com antecedência."
+        />
+      </div>
+      <dl class="grid gap-px self-center overflow-hidden rounded-[3px] bg-line sm:grid-cols-3 lg:col-span-7">
+        {
+          schedule.map((s) => (
+            <div class="flex flex-col gap-4 bg-paper p-7">
+              <dt class="flex items-center gap-2.5 text-[0.78rem] font-bold uppercase tracking-[0.16em] text-stone">
+                <Icon name={s.icon} size={18} strokeWidth={1.5} class="text-gold" />
+                {s.label}
+              </dt>
+              <dd class="font-serif text-[1.65rem] leading-tight text-ink">{s.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>

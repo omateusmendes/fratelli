@@ -1,0 +1,149 @@
+---
+/**
+ * Formulário de consulta de disponibilidade.
+ * Não há backend: os dados viram uma mensagem pronta no WhatsApp da recepção.
+ */
+import { rooms } from '@/data/rooms';
+import { hotel } from '@/data/hotel';
+import { buildWhatsAppUrl } from '@/lib/whatsapp';
+import Icon from '@/components/icons/Icon.astro';
+
+const field =
+  'block w-full min-h-12 rounded-[3px] border border-line bg-paper px-4 text-[1rem] text-ink placeholder:text-muted/80 transition-colors focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30';
+const labelCls = 'mb-2 block text-[0.78rem] font-bold uppercase tracking-[0.14em] text-stone';
+---
+
+<form
+  class="rounded-[3px] border border-line bg-paper p-6 sm:p-9"
+  data-availability
+  data-whatsapp={hotel.whatsapp.number}
+  novalidate
+>
+  <h2 class="text-h3">Consultar disponibilidade</h2>
+  <p class="mt-2 text-[0.98rem] text-stone">
+    Preencha os dados e envie pelo WhatsApp. A recepção responde com valores e disponibilidade.
+  </p>
+
+  <div class="mt-8 grid gap-5 sm:grid-cols-2">
+    <div>
+      <label for="checkin" class={labelCls}>Check-in</label>
+      <input id="checkin" name="checkin" type="date" required class={field} />
+    </div>
+    <div>
+      <label for="checkout" class={labelCls}>Check-out</label>
+      <input id="checkout" name="checkout" type="date" required class={field} aria-describedby="checkout-error" />
+    </div>
+    <div>
+      <label for="guests" class={labelCls}>Hóspedes</label>
+      <select id="guests" name="guests" class={field}>
+        <option value="1">1 hóspede</option>
+        <option value="2" selected>2 hóspedes</option>
+        <option value="3">3 hóspedes</option>
+        <option value="4">4 ou mais hóspedes</option>
+      </select>
+    </div>
+    <div>
+      <label for="room" class={labelCls}>Acomodação</label>
+      <select id="room" name="room" class={field}>
+        <option value="">Sem preferência</option>
+        {rooms.map((r) => <option value={r.slug} data-name={r.name}>{r.name}</option>)}
+      </select>
+    </div>
+    <div class="sm:col-span-2">
+      <label for="name" class={labelCls}>Seu nome <span class="font-normal normal-case tracking-normal text-muted">(opcional)</span></label>
+      <input id="name" name="name" type="text" autocomplete="name" class={field} />
+    </div>
+    <div class="sm:col-span-2">
+      <label for="notes" class={labelCls}>Observações <span class="font-normal normal-case tracking-normal text-muted">(opcional)</span></label>
+      <textarea id="notes" name="notes" rows="3" class={`${field} py-3`} placeholder="Ex.: chegada mais tarde, viagem a trabalho, nota fiscal…"></textarea>
+    </div>
+  </div>
+
+  <p id="checkout-error" class="mt-4 hidden text-[0.92rem] font-bold text-[#9b2c1f]" role="alert" data-error></p>
+
+  <button
+    type="submit"
+    class="mt-7 inline-flex min-h-14 w-full items-center justify-center gap-2.5 btn-gold rounded-[3px] px-7 text-[1.02rem] font-bold"
+  >
+    <Icon name="whatsapp" size={20} />
+    Enviar pelo WhatsApp
+  </button>
+  <p class="mt-3 text-center text-[0.82rem] text-muted">Abre o WhatsApp com a mensagem pronta. Nada é enviado sem a sua confirmação.</p>
+
+  <noscript>
+    <p class="mt-4 text-center text-[0.95rem]">
+      <a href={buildWhatsAppUrl()} class="font-bold underline">Abrir o WhatsApp da recepção</a>
+    </p>
+  </noscript>
+</form>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-availability]');
+
+  if (form) {
+    const checkin = form.querySelector<HTMLInputElement>('#checkin')!;
+    const checkout = form.querySelector<HTMLInputElement>('#checkout')!;
+    const room = form.querySelector<HTMLSelectElement>('#room')!;
+    const error = form.querySelector<HTMLElement>('[data-error]')!;
+
+    const toISO = (d: Date) => {
+      const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+      return local.toISOString().slice(0, 10);
+    };
+    const toBR = (iso: string) => iso.split('-').reverse().join('/');
+
+    const today = toISO(new Date());
+    checkin.min = today;
+    checkout.min = today;
+
+    checkin.addEventListener('change', () => {
+      if (!checkin.value) return;
+      const next = new Date(`${checkin.value}T12:00:00`);
+      next.setDate(next.getDate() + 1);
+      checkout.min = toISO(next);
+      if (!checkout.value || checkout.value <= checkin.value) checkout.value = toISO(next);
+    });
+
+    const preset = new URLSearchParams(window.location.search).get('quarto');
+    if (preset && room.querySelector(`option[value="${CSS.escape(preset)}"]`)) room.value = preset;
+
+    const showError = (message: string, field: HTMLInputElement) => {
+      error.textContent = message;
+      error.classList.remove('hidden');
+      field.setAttribute('aria-invalid', 'true');
+      field.focus();
+    };
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      error.classList.add('hidden');
+      checkin.removeAttribute('aria-invalid');
+      checkout.removeAttribute('aria-invalid');
+
+      if (!checkin.value) return showError('Informe a data de check-in.', checkin);
+      if (!checkout.value) return showError('Informe a data de check-out.', checkout);
+      if (checkout.value <= checkin.value)
+        return showError('A data de check-out precisa ser posterior ao check-in.', checkout);
+
+      const data = new FormData(form);
+      const guests = String(data.get('guests'));
+      const roomName = room.selectedOptions[0]?.dataset.name ?? 'Sem preferência';
+      const name = String(data.get('name') ?? '').trim();
+      const notes = String(data.get('notes') ?? '').trim();
+
+      const lines = [
+        'Olá! Vim pelo site do Fratelli Premium Hotel e gostaria de consultar disponibilidade:',
+        '',
+        `• Check-in: ${toBR(checkin.value)}`,
+        `• Check-out: ${toBR(checkout.value)}`,
+        `• Hóspedes: ${guests === '4' ? '4 ou mais' : guests}`,
+        `• Acomodação: ${roomName}`,
+      ];
+      if (name) lines.push(`• Nome: ${name}`);
+      if (notes) lines.push(`• Observações: ${notes}`);
+
+      const url = `https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(lines.join('\n'))}`;
+      window.open(url, '_blank', 'noopener');
+    });
+  }
+</script>

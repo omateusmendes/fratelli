@@ -1,0 +1,92 @@
+---
+import {
+  Accessibility,
+  ArrowRight,
+  ArrowUpRight,
+  Bath,
+  BedDouble,
+  BedSingle,
+  BellRing,
+  Briefcase,
+  Camera,
+  Car,
+  Clock,
+  Coffee,
+  ConciergeBell,
+  Croissant,
+  DoorOpen,
+  Mail,
+  MapPin,
+  Maximize2,
+  Navigation,
+  Phone,
+  Shirt,
+  Sofa,
+  Sparkles,
+  Star,
+  Sun,
+  Tv,
+  Users,
+  Utensils,
+  Wifi,
+  Snowflake,
+  Heart,
+  Info,
+} from '@lucide/astro';
+import WhatsAppIcon from './WhatsAppIcon.astro';
+
+const icons = {
+  accessibility: Accessibility,
+  'arrow-right': ArrowRight,
+  'arrow-up-right': ArrowUpRight,
+  bath: Bath,
+  'bed-double': BedDouble,
+  'bed-single': BedSingle,
+  bell: BellRing,
+  briefcase: Briefcase,
+  camera: Camera,
+  car: Car,
+  clock: Clock,
+  coffee: Coffee,
+  concierge: ConciergeBell,
+  croissant: Croissant,
+  door: DoorOpen,
+  mail: Mail,
+  'map-pin': MapPin,
+  size: Maximize2,
+  navigation: Navigation,
+  phone: Phone,
+  shirt: Shirt,
+  sofa: Sofa,
+  sparkles: Sparkles,
+  star: Star,
+  sun: Sun,
+  tv: Tv,
+  users: Users,
+  utensils: Utensils,
+  wifi: Wifi,
+  snowflake: Snowflake,
+  heart: Heart,
+  info: Info,
+} as const;
+
+export type IconName = keyof typeof icons | 'whatsapp';
+
+interface Props {
+  name: IconName;
+  size?: number;
+  strokeWidth?: number;
+  class?: string;
+}
+
+const { name, size = 20, strokeWidth = 1.5, class: className } = Astro.props;
+const Lucide = name === 'whatsapp' ? null : icons[name];
+---
+
+{
+  Lucide ? (
+    <Lucide size={size} stroke-width={strokeWidth} class={className} aria-hidden="true" />
+  ) : (
+    <WhatsAppIcon size={size} class={className} />
+  )
+}

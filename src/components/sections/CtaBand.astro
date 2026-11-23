@@ -1,0 +1,45 @@
+---
+import { hotel } from '@/data/hotel';
+import { buildWhatsAppUrl } from '@/lib/whatsapp';
+import Button from '@/components/ui/Button.astro';
+
+interface Props {
+  title?: string;
+  text?: string;
+  message?: string;
+}
+
+const {
+  title = 'Sua próxima estadia começa aqui.',
+  text = 'Consulte a disponibilidade diretamente com a nossa equipe.',
+  message,
+} = Astro.props;
+---
+
+<section aria-labelledby="cta-title" data-hide-float class="on-dark relative isolate overflow-hidden bg-charcoal text-cream">
+  <svg class="absolute inset-0 -z-10 h-full w-full text-gold/10" aria-hidden="true" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 400">
+    <defs>
+      <pattern id="cta-arches" width="80" height="400" patternUnits="userSpaceOnUse">
+        <rect x="20" y="60" width="40" height="120" rx="20" fill="none" stroke="currentColor" stroke-width="0.8"></rect>
+        <rect x="20" y="220" width="40" height="120" rx="20" fill="none" stroke="currentColor" stroke-width="0.8"></rect>
+      </pattern>
+    </defs>
+    <rect width="1200" height="400" fill="url(#cta-arches)"></rect>
+  </svg>
+
+  <div class="container-site flex flex-col items-center py-16 text-center sm:py-20 lg:py-24">
+    <h2 id="cta-title" class="text-h2 !text-cream">{title}</h2>
+    <p class="mt-4 max-w-xl text-lead text-cream/75">{text}</p>
+    <div class="mt-9 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+      <Button href={buildWhatsAppUrl(message)} icon="whatsapp" size="lg">Conversar pelo WhatsApp</Button>
+      <Button href={`tel:${hotel.phone.e164}`} variant="outline-light" icon="phone" size="lg" external={false}>
+        {hotel.phone.display}
+      </Button>
+    </div>
+    <p class="mt-10 flex items-center gap-4 text-[0.88rem] text-cream/55">
+      <span class="h-px w-10 bg-cream/25 sm:w-20" aria-hidden="true"></span>
+      {hotel.address.city} · {hotel.address.stateName}
+      <span class="h-px w-10 bg-cream/25 sm:w-20" aria-hidden="true"></span>
+    </p>
+  </div>
+</section>

@@ -1,0 +1,304 @@
+@import '@fontsource-variable/newsreader/opsz.css';
+@import '@fontsource/lato/latin-400.css';
+@import '@fontsource/lato/latin-400-italic.css';
+@import '@fontsource/lato/latin-700.css';
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------
+   Design tokens — Fratelli Premium Hotel
+   Paleta: creme, carvão e dourado. Os dourados e degradês foram
+   amostrados do logotipo oficial.
+------------------------------------------------------------------- */
+:root {
+  /* Degradê metálico claro (logo, botões, detalhes sobre fundo escuro).
+     O padrão se repete em 0–50% e 50–100% para o brilho deslizar no hover. */
+  --gradient-gold: linear-gradient(
+    100deg,
+    #a8730c 0%,
+    #d9a21e 12%,
+    #f7d55a 24%,
+    #dcaa2c 36%,
+    #a8730c 50%,
+    #d9a21e 62%,
+    #f7d55a 74%,
+    #dcaa2c 86%,
+    #a8730c 100%
+  );
+  /* Degradê profundo para textos e fios dourados sobre fundos claros. */
+  --gradient-gold-deep: linear-gradient(100deg, #6e4a08 0%, #9a6c10 30%, #b8862a 50%, #9a6c10 70%, #6e4a08 100%);
+}
+
+@theme {
+  --color-cream: #f7f3ec;
+  --color-paper: #fbf9f5;
+  --color-sand: #efe7da;
+  --color-line: #ddd3c3;
+  /* Preto neutro da identidade do hotel */
+  --color-ink: #1f1d1e;
+  --color-charcoal: #2a2829;
+  --color-stone: #4a463f;
+  --color-muted: #6b655c;
+  --color-gold: #c99a2e;
+  --color-gold-light: #e9c766;
+  --color-gold-dark: #7a5a14;
+
+  --font-serif: 'Newsreader Variable', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-sans: 'Lato', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --text-display: clamp(2.6rem, 1.6rem + 4.2vw, 4.75rem);
+  --text-display--line-height: 1.02;
+  --text-h1: clamp(2.25rem, 1.55rem + 2.9vw, 3.75rem);
+  --text-h1--line-height: 1.06;
+  --text-h2: clamp(1.85rem, 1.4rem + 1.9vw, 2.9rem);
+  --text-h2--line-height: 1.1;
+  --text-h3: clamp(1.4rem, 1.2rem + 0.8vw, 1.85rem);
+  --text-h3--line-height: 1.2;
+  --text-lead: clamp(1.075rem, 1rem + 0.35vw, 1.25rem);
+  --text-lead--line-height: 1.6;
+
+  --tracking-eyebrow: 0.32em;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 6rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    @apply bg-cream font-sans text-charcoal antialiased;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif text-ink;
+    font-weight: 500;
+    font-optical-sizing: auto;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-gold-light);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+}
+
+@layer components {
+  /* Rótulo em caixa alta com fio dourado — assinatura da prévia */
+  .eyebrow {
+    @apply font-sans text-[0.75rem] font-bold uppercase text-gold-dark;
+    letter-spacing: var(--tracking-eyebrow);
+  }
+
+  .on-dark .eyebrow {
+    @apply text-gold-light;
+  }
+
+  .rule-gold {
+    display: block;
+    width: 4rem;
+    height: 1px;
+    background: var(--gradient-gold-deep);
+  }
+
+  .on-dark .rule-gold {
+    height: 1px;
+    background: var(--gradient-gold);
+    background-size: 200% 100%;
+  }
+
+  /*
+   * Foto do topo da home no celular: a própria imagem se dissolve no fundo
+   * (máscara), sem borda inferior — evita a linha de 1px que aparecia entre a
+   * foto animada (camada da GPU) e o degradê em telas de alta densidade.
+   */
+  @media (max-width: 1023.98px) {
+    .hero-photo {
+      -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 98%);
+      mask-image: linear-gradient(to bottom, #000 55%, transparent 98%);
+    }
+  }
+
+  /* Faixa dourada de assinatura (bordas da arte do hotel) */
+  .brand-bar {
+    display: block;
+    height: 2px;
+    background: var(--gradient-gold);
+    background-size: 100% 100%;
+  }
+
+  /* Fios que somem nas pontas (rótulos centralizados) */
+  .rule-fade-l {
+    background: linear-gradient(90deg, transparent, var(--color-gold));
+  }
+
+  .rule-fade-r {
+    background: linear-gradient(90deg, var(--color-gold), transparent);
+  }
+
+  /*
+   * Botão principal.
+   * - Fundos claros: preto da marca, texto creme e ícone dourado; no hover,
+   *   clareia para carvão e ganha um fio dourado (dourado como detalhe).
+   * - Fundos escuros (.on-dark): dourado metálico com texto preto.
+   */
+  .btn-gold {
+    background-color: var(--color-ink);
+    color: var(--color-cream);
+    box-shadow: inset 0 0 0 1px transparent;
+    transition:
+      background-color 0.3s var(--ease-out-soft),
+      box-shadow 0.3s var(--ease-out-soft),
+      background-position 0.7s var(--ease-out-soft);
+  }
+
+  .btn-gold svg {
+    color: var(--color-gold-light);
+  }
+
+  .btn-gold:hover,
+  .btn-gold:focus-visible {
+    background-color: var(--color-charcoal);
+    box-shadow: inset 0 0 0 1px rgb(201 154 46 / 0.75);
+  }
+
+  .on-dark .btn-gold svg {
+    color: inherit;
+  }
+
+  .on-dark .btn-gold {
+    background-color: var(--color-gold);
+    background-image: var(--gradient-gold);
+    background-size: 200% 100%;
+    background-position: 0% 50%;
+    color: var(--color-ink);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+
+  .on-dark .btn-gold:hover,
+  .on-dark .btn-gold:focus-visible {
+    background-color: var(--color-gold);
+    background-position: 100% 50%;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+
+  .container-site {
+    width: 100%;
+    max-width: 76rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-site {
+      padding-inline: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-site {
+      padding-inline: 3rem;
+    }
+  }
+
+  .prose-hotel p + p {
+    margin-top: 1.1em;
+  }
+
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 0.2em;
+    transition: background-size 0.35s var(--ease-out-soft);
+  }
+
+  .link-underline:hover {
+    background-size: 40% 1px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Utilitários de dourado metálico
+------------------------------------------------------------------- */
+
+/* Fundo em degradê; com `metal-shine` o brilho desliza no hover. */
+@utility bg-gold-metal {
+  background-color: var(--color-gold);
+  background-image: var(--gradient-gold);
+  background-size: 200% 100%;
+  background-position: 0% 50%;
+}
+
+@utility metal-shine {
+  transition: background-position 0.7s var(--ease-out-soft);
+
+  &:hover,
+  &:focus-visible {
+    background-position: 100% 50%;
+  }
+}
+
+/* Texto em degradê (sobre fundo escuro) com cor sólida de fallback. */
+@utility text-gold-metal {
+  color: var(--color-gold-light);
+
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    background-image: var(--gradient-gold);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* Texto em degradê profundo (sobre fundo claro). */
+@utility text-gold-metal-deep {
+  color: var(--color-gold-dark);
+
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    background-image: var(--gradient-gold-deep);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

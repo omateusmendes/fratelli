@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Button from '@/components/ui/Button.astro';
+---
+
+<BaseLayout
+  title="Página não encontrada | Fratelli Premium Hotel"
+  description="A página que você procura não foi encontrada."
+  noindex
+>
+  <section class="bg-paper">
+    <div class="container-site flex min-h-[60vh] flex-col items-start justify-center py-24">
+      <Eyebrow>Erro 404</Eyebrow>
+      <h1 class="mt-6 max-w-2xl text-h1">Esta página não está disponível.</h1>
+      <p class="mt-5 max-w-xl text-lead text-stone">
+        O endereço pode ter mudado. Volte ao início ou conheça nossas acomodações.
+      </p>
+      <div class="mt-10 flex flex-wrap gap-3">
+        <Button href="/" variant="dark">Voltar ao início</Button>
+        <Button href="/acomodacoes/" variant="outline">Ver acomodações</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

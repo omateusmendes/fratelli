@@ -1,0 +1,113 @@
+---
+/** Apresentação completa de uma categoria na página de acomodações. */
+import type { Room } from '@/data/rooms';
+import Media from '@/components/ui/Media.astro';
+import Carousel from '@/components/ui/Carousel.astro';
+import Icon, { type IconName } from '@/components/icons/Icon.astro';
+import Button from '@/components/ui/Button.astro';
+import { buildWhatsAppUrl, roomMessage } from '@/lib/whatsapp';
+
+interface Props {
+  room: Room;
+  index: number;
+  reverse?: boolean;
+}
+
+const { room, index, reverse = false } = Astro.props;
+const dark = Boolean(room.featured);
+
+const amenityIcon = (label: string): IconName => {
+  const l = label.toLowerCase();
+  if (l.includes('hidro')) return 'bath';
+  if (l.includes('ar-cond')) return 'snowflake';
+  if (l.includes('tv')) return 'tv';
+  if (l.includes('wi-fi')) return 'wifi';
+  if (l.includes('banheiro')) return 'door';
+  return 'sparkles';
+};
+
+const specs: { icon: IconName; label: string; value: string }[] = [
+  { icon: 'size', label: 'Área', value: `${room.size} m²` },
+  { icon: room.beds.includes('solteiro') ? 'bed-single' : 'bed-double', label: 'Camas', value: room.beds },
+  { icon: 'users', label: 'Ocupação', value: `Até ${room.guests} hóspedes` },
+];
+---
+
+<section
+  id={room.slug}
+  aria-labelledby={`${room.slug}-title`}
+  class:list={['scroll-mt-24', dark ? 'on-dark bg-ink text-cream/80' : index % 2 === 0 ? 'bg-cream' : 'bg-paper']}
+>
+  <div class="container-site grid gap-10 py-16 sm:py-20 lg:grid-cols-12 lg:items-center lg:gap-16 lg:py-28">
+    <div class:list={['lg:col-span-7', reverse && 'lg:order-2']}>
+      <div class="aspect-[4/3] overflow-hidden rounded-[3px]">
+        {
+          room.photos.length > 0 ? (
+            <Carousel photos={room.photos} label={room.name} variant="full" sizes="(min-width: 1024px) 58vw, 100vw" />
+          ) : (
+            <Media
+              alt={room.imageAlt}
+              label={room.name}
+              tone={dark ? 'dark' : 'light'}
+              sizes="(min-width: 1024px) 58vw, 100vw"
+              class="h-full w-full"
+            />
+          )
+        }
+      </div>
+    </div>
+
+    <div class:list={['lg:col-span-5', reverse && 'lg:order-1']}>
+      <p
+        class:list={['font-serif text-[1.05rem]', dark ? 'text-gold-metal' : 'text-gold-metal-deep']}
+        aria-hidden="true"
+      >
+        {String(index + 1).padStart(2, '0')}
+      </p>
+      <p class="eyebrow mt-3">{room.tagline}</p>
+      <h2 id={`${room.slug}-title`} class:list={['mt-3 text-h2', dark && '!text-cream']}>{room.name}</h2>
+      <p class:list={['mt-5 text-[1.05rem]', dark ? 'text-cream/80' : 'text-stone']}>{room.description}</p>
+
+      <dl class:list={['mt-8 grid grid-cols-3 border-y', dark ? 'border-cream/15' : 'border-line']}>
+        {
+          specs.map((s, i) => (
+            <div class:list={['py-4', i > 0 && 'border-l pl-4', dark ? 'border-cream/15' : 'border-line']}>
+              <dt class:list={['flex items-center gap-1.5 text-[0.75rem] font-bold uppercase tracking-[0.16em]', dark ? 'text-cream/55' : 'text-muted']}>
+                <Icon name={s.icon} size={15} strokeWidth={1.5} class="text-gold" />
+                {s.label}
+              </dt>
+              <dd class:list={['mt-1.5 font-serif text-[1.05rem] leading-snug', dark ? 'text-cream' : 'text-ink']}>{s.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      {
+        room.amenities.length > 0 && (
+          <ul class="mt-6 flex flex-wrap gap-2" aria-label="Comodidades da acomodação">
+            {room.amenities.map((a) => (
+              <li
+                class:list={[
+                  'inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[0.88rem]',
+                  dark ? 'border-cream/20 text-cream/85' : 'border-line bg-paper text-charcoal',
+                ]}
+              >
+                <Icon name={amenityIcon(a)} size={15} strokeWidth={1.5} class="text-gold" />
+                {a}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+
+      <div class="mt-9 flex flex-wrap items-center gap-3">
+        <Button href={buildWhatsAppUrl(roomMessage(room.name))} icon="whatsapp">
+          Consultar disponibilidade
+        </Button>
+        <Button href={`/contato/?quarto=${room.slug}`} variant={dark ? 'outline-light' : 'outline'}>
+          Montar pedido
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>

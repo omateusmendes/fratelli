@@ -1,0 +1,521 @@
+---
+/**
+ * Carrossel de fotos com crossfade e zoom lento.
+ * - variant="full": setas, indicadores em fio dourado com progresso,
+ *   contador, pausa, arrastar e teclado (página de acomodações).
+ * - variant="subtle": apenas a troca automática, sem controles (cartões).
+ * Pausa no hover/foco, fora da tela e com a aba oculta.
+ * Sem autoplay nem zoom quando o usuário prefere movimento reduzido.
+ */
+import { Picture } from 'astro:assets';
+import type { Photo } from '@/data/photos';
+import { ChevronLeft, ChevronRight, Pause, Play } from '@lucide/astro';
+
+interface Props {
+  photos: Photo[];
+  /** Nome do conjunto (ex.: nome do quarto), usado nos rótulos acessíveis. */
+  label: string;
+  variant?: 'full' | 'subtle';
+  /** Intervalo entre as fotos, em ms. */
+  interval?: number;
+  /** Atraso antes da primeira troca (para defasar cartões vizinhos), em ms. */
+  delay?: number;
+  sizes?: string;
+  /** Primeira foto com prioridade alta de carregamento (LCP). */
+  priority?: boolean;
+  /** Tratamento de cor quente + vinheta, para harmonizar com o dourado. */
+  warm?: boolean;
+  /** Intensidade do zoom lento da foto ativa (1 = sem zoom). */
+  zoom?: number;
+  /** "out": a foto entra ampliada e se afasta; "in": aproximação contínua (efeito cinematográfico). */
+  zoomMode?: 'out' | 'in';
+  class?: string;
+}
+
+const {
+  photos,
+  label,
+  variant = 'full',
+  interval = 5500,
+  delay = 0,
+  sizes = '(min-width: 1024px) 58vw, 100vw',
+  priority = false,
+  warm = false,
+  zoom = 1.06,
+  zoomMode = 'out',
+  class: className,
+} = Astro.props;
+
+const zoomDuration = zoomMode === 'in' ? interval + 1200 : Math.round(interval * 1.4);
+
+const total = photos.length;
+const multiple = total > 1;
+const full = variant === 'full' && multiple;
+const pad = (n: number) => String(n).padStart(2, '0');
+const widthsFor = (w: number) => {
+  const list = [480, 768, 1024, 1440].filter((x) => x < w);
+  return [...list, w];
+};
+---
+
+<div
+  class:list={[
+    'carousel group/carousel relative isolate h-full w-full overflow-hidden',
+    warm ? 'carousel-warm bg-ink' : 'bg-sand',
+    zoomMode === 'in' && 'carousel-zoom-in',
+    className,
+  ]}
+  data-carousel={multiple ? variant : undefined}
+  data-interval={interval}
+  data-delay={delay}
+  role={full ? 'region' : undefined}
+  aria-roledescription={full ? 'carrossel' : undefined}
+  aria-label={full ? `Fotos: ${label}` : undefined}
+  tabindex={full ? 0 : undefined}
+  style={`--carousel-interval: ${interval}ms; --carousel-zoom: ${zoom}; --carousel-zoom-duration: ${zoomDuration}ms;`}
+>
+  <ul class="relative h-full w-full" role={multiple ? undefined : 'presentation'}>
+    {
+      photos.map((photo, i) => (
+        <li
+          class="carousel-slide absolute inset-0"
+          data-slide
+          data-active={i === 0 ? '' : undefined}
+          role={full ? 'group' : undefined}
+          aria-roledescription={full ? 'slide' : undefined}
+          aria-label={full ? `Foto ${i + 1} de ${total}` : undefined}
+          aria-hidden={i === 0 ? undefined : 'true'}
+        >
+          <Picture
+            src={photo.src}
+            alt={photo.alt}
+            formats={['avif', 'webp']}
+            widths={widthsFor(photo.src.width)}
+            sizes={sizes}
+            loading={i === 0 ? 'eager' : 'lazy'}
+            fetchpriority={i === 0 && priority ? 'high' : 'auto'}
+            decoding="async"
+            pictureAttributes={{ class: 'block h-full w-full' }}
+            class="carousel-img h-full w-full object-cover"
+            style={photo.focus ? `object-position: ${photo.focus}; transform-origin: ${photo.focus};` : undefined}
+          />
+        </li>
+      ))
+    }
+  </ul>
+
+  {/* Progresso usado para cronometrar a troca (invisível na variante sutil) */}
+  {
+    multiple && !full && (
+      <span class="carousel-timer" aria-hidden="true">
+        <span class="carousel-fill" data-fill />
+      </span>
+    )
+  }
+
+  {
+    full && (
+      <>
+        <div
+          class="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-ink/70 via-ink/25 to-transparent"
+          aria-hidden="true"
+        />
+
+        <button
+          type="button"
+          class="carousel-arrow left-3 sm:left-4"
+          data-prev
+          aria-label="Foto anterior"
+        >
+          <ChevronLeft size={22} stroke-width={1.5} aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          class="carousel-arrow right-3 sm:right-4"
+          data-next
+          aria-label="Próxima foto"
+        >
+          <ChevronRight size={22} stroke-width={1.5} aria-hidden="true" />
+        </button>
+
+        <div class="absolute inset-x-4 bottom-4 flex items-center gap-4 sm:inset-x-6 sm:bottom-5">
+          <p class="font-serif text-[0.95rem] tabular-nums text-cream" aria-hidden="true">
+            <span data-current>01</span>
+            <span class="text-cream/55"> / {pad(total)}</span>
+          </p>
+
+          <div class="flex flex-1 items-center gap-1.5" role="group" aria-label="Escolher foto">
+            {photos.map((_, i) => (
+              <button
+                type="button"
+                class="carousel-dot"
+                data-dot={i}
+                aria-label={`Mostrar foto ${i + 1} de ${total}`}
+                aria-current={i === 0 ? 'true' : undefined}
+              >
+                <span class="carousel-track">
+                  <span class="carousel-fill" data-fill={i === 0 ? '' : undefined} />
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            class="-mr-2 inline-flex size-11 shrink-0 items-center justify-center rounded-full text-cream/85 transition-colors hover:text-gold-light"
+            data-toggle
+            aria-label="Pausar troca automática"
+          >
+            <Pause size={16} stroke-width={1.75} aria-hidden="true" data-icon-pause />
+            <Play size={16} stroke-width={1.75} aria-hidden="true" data-icon-play class="hidden" />
+          </button>
+        </div>
+
+        <p class="sr-only" aria-live="polite" data-live />
+      </>
+    )
+  }
+</div>
+
+<style is:global>
+  .carousel {
+    touch-action: pan-y;
+    /* isola a pintura da animação (zoom/filtro) para não repintar o resto da página */
+    contain: paint;
+  }
+
+  .carousel-slide {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 1s;
+  }
+
+  .carousel-slide[data-active] {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s;
+  }
+
+  .carousel-img {
+    transform: scale(var(--carousel-zoom, 1.06));
+    transition: transform var(--carousel-zoom-duration, 7s) cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  /* Aproximação contínua (hero): roda também na primeira foto, ao carregar */
+  .carousel-zoom-in .carousel-img {
+    transform: scale(var(--carousel-zoom));
+    transition: none;
+  }
+
+  .carousel-zoom-in .carousel-slide[data-active] .carousel-img {
+    animation: carousel-kenburns var(--carousel-zoom-duration) cubic-bezier(0.2, 0.6, 0.35, 1) both;
+  }
+
+  .carousel-zoom-in[data-carousel]:not([data-playing]) .carousel-slide[data-active] .carousel-img {
+    animation-play-state: paused;
+  }
+
+  @keyframes carousel-kenburns {
+    from {
+      transform: scale(1.02);
+    }
+    to {
+      transform: scale(var(--carousel-zoom));
+    }
+  }
+
+  /* Tratamento quente: aproxima as fotos (luz fria de celular) do dourado da marca */
+  .carousel-warm .carousel-img {
+    filter: sepia(0.14) saturate(1.08) brightness(0.94) contrast(1.04);
+  }
+
+  .carousel-warm::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 95% at 60% 45%, transparent 45%, rgb(31 29 30 / 0.55) 100%),
+      linear-gradient(180deg, rgb(201 154 46 / 0.06), rgb(31 29 30 / 0.12));
+  }
+
+  .carousel-slide[data-active] .carousel-img {
+    transform: scale(1);
+  }
+
+  .carousel:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+  }
+
+  .carousel-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background: rgb(31 29 30 / 0.55);
+    color: var(--color-cream);
+    box-shadow: inset 0 0 0 1px rgb(201 154 46 / 0.35);
+    transform: translateY(-50%);
+    transition:
+      background-color 0.3s,
+      color 0.3s,
+      opacity 0.3s;
+  }
+
+  .carousel-arrow:hover {
+    background: rgb(31 29 30 / 0.8);
+    color: var(--color-gold-light);
+  }
+
+  @media (hover: hover) and (min-width: 1024px) {
+    .carousel-arrow {
+      opacity: 0;
+    }
+
+    .carousel:hover .carousel-arrow,
+    .carousel:focus-within .carousel-arrow {
+      opacity: 1;
+    }
+  }
+
+  .carousel-dot {
+    display: flex;
+    flex: 1;
+    max-width: 3.5rem;
+    min-width: 1.75rem;
+    align-items: center;
+    /* área de toque de 44px de altura, mantendo o fio fino */
+    padding-block: 1.3125rem;
+    margin-block: -0.5625rem;
+  }
+
+  .carousel-track {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 2px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: rgb(247 243 236 / 0.35);
+  }
+
+  .carousel-dot:hover .carousel-track {
+    background: rgb(247 243 236 / 0.6);
+  }
+
+  .carousel-fill {
+    position: absolute;
+    inset: 0;
+    display: block;
+    transform-origin: left;
+    transform: scaleX(0);
+    background: var(--gradient-gold);
+    background-size: 200% 100%;
+  }
+
+  /* Indicador já visto fica preenchido; o ativo anima o progresso */
+  .carousel-dot[data-seen] .carousel-fill {
+    transform: scaleX(1);
+  }
+
+  .carousel-fill[data-running] {
+    animation: carousel-progress var(--carousel-interval) linear forwards;
+  }
+
+  .carousel:not([data-playing]) .carousel-fill[data-running] {
+    animation-play-state: paused;
+  }
+
+  .carousel-timer {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    visibility: hidden;
+  }
+
+  @keyframes carousel-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel-img,
+    .carousel-slide[data-active] .carousel-img,
+    .carousel-zoom-in .carousel-slide[data-active] .carousel-img {
+      transform: none;
+      transition: none;
+      animation: none;
+    }
+
+    .carousel-slide,
+    .carousel-slide[data-active] {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => {
+    const full = root.dataset.carousel === 'full';
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('[data-slide]'));
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-dot]'));
+    const current = root.querySelector<HTMLElement>('[data-current]');
+    const live = root.querySelector<HTMLElement>('[data-live]');
+    const toggle = root.querySelector<HTMLButtonElement>('[data-toggle]');
+    const timerFill = root.querySelector<HTMLElement>('.carousel-timer [data-fill]');
+    const total = slides.length;
+    const delay = Number(root.dataset.delay ?? 0);
+
+    let index = 0;
+    let userPaused = reduceMotion.matches;
+    let hovering = false;
+    let focused = false;
+    let inView = false;
+    let firstRun = true;
+
+    const fillFor = (i: number) =>
+      full ? dots[i]?.querySelector<HTMLElement>('.carousel-fill') ?? null : timerFill;
+
+    const restartFill = (i: number) => {
+      root.querySelectorAll<HTMLElement>('[data-running]').forEach((el) => {
+        el.removeAttribute('data-running');
+        el.style.animationDelay = '';
+      });
+      const fill = fillFor(i);
+      if (!fill || reduceMotion.matches) return;
+      void fill.offsetWidth; // reinicia a animação
+      if (firstRun && delay) fill.style.animationDelay = `${delay}ms`;
+      fill.setAttribute('data-running', '');
+    };
+
+    const updatePlaying = () => {
+      const playing = !userPaused && !hovering && !focused && inView && !document.hidden && !reduceMotion.matches;
+      root.toggleAttribute('data-playing', playing);
+    };
+
+    const goTo = (next: number, announce = false) => {
+      index = (next + total) % total;
+      slides.forEach((slide, i) => {
+        const active = i === index;
+        slide.toggleAttribute('data-active', active);
+        if (active) slide.removeAttribute('aria-hidden');
+        else slide.setAttribute('aria-hidden', 'true');
+      });
+      dots.forEach((dot, i) => {
+        if (i === index) dot.setAttribute('aria-current', 'true');
+        else dot.removeAttribute('aria-current');
+        dot.toggleAttribute('data-seen', i < index);
+      });
+      if (current) current.textContent = String(index + 1).padStart(2, '0');
+      if (announce && live) live.textContent = `Foto ${index + 1} de ${total}`;
+      restartFill(index);
+      firstRun = false;
+    };
+
+    // Avança quando o indicador termina de "encher"
+    root.addEventListener('animationend', (event) => {
+      if ((event.target as HTMLElement).hasAttribute('data-running')) goTo(index + 1);
+    });
+
+    // Pausas automáticas (na variante sutil, o hover vale para o cartão inteiro)
+    const hoverTarget: HTMLElement = full ? root : (root.closest<HTMLElement>('article') ?? root);
+    hoverTarget.addEventListener('pointerenter', (e) => {
+      if (e.pointerType === 'mouse') {
+        hovering = true;
+        updatePlaying();
+      }
+    });
+    hoverTarget.addEventListener('pointerleave', () => {
+      hovering = false;
+      updatePlaying();
+    });
+    root.addEventListener('focusin', () => {
+      focused = true;
+      updatePlaying();
+    });
+    root.addEventListener('focusout', (e) => {
+      if (!root.contains(e.relatedTarget as Node | null)) {
+        focused = false;
+        updatePlaying();
+      }
+    });
+    document.addEventListener('visibilitychange', updatePlaying);
+    new IntersectionObserver(
+      ([entry]) => {
+        inView = Boolean(entry?.isIntersecting);
+        updatePlaying();
+      },
+      { threshold: 0.35 },
+    ).observe(root);
+
+    if (full) {
+      root.querySelector('[data-prev]')?.addEventListener('click', () => goTo(index - 1, true));
+      root.querySelector('[data-next]')?.addEventListener('click', () => goTo(index + 1, true));
+      dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i, true)));
+
+      root.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          goTo(index - 1, true);
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          goTo(index + 1, true);
+        }
+      });
+
+      const setPausedUi = () => {
+        if (!toggle) return;
+        toggle.setAttribute('aria-label', userPaused ? 'Retomar troca automática' : 'Pausar troca automática');
+        toggle.querySelector('[data-icon-pause]')?.classList.toggle('hidden', userPaused);
+        toggle.querySelector('[data-icon-play]')?.classList.toggle('hidden', !userPaused);
+      };
+      toggle?.addEventListener('click', () => {
+        userPaused = !userPaused;
+        if (!userPaused && !root.querySelector('[data-running]')) restartFill(index);
+        setPausedUi();
+        updatePlaying();
+      });
+      setPausedUi();
+
+      // Arrastar (toque e caneta)
+      let startX = 0;
+      let startY = 0;
+      let tracking = false;
+      root.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' || (e.target as HTMLElement).closest('button')) return;
+        tracking = true;
+        startX = e.clientX;
+        startY = e.clientY;
+      });
+      root.addEventListener('pointerup', (e) => {
+        if (!tracking) return;
+        tracking = false;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) goTo(dx < 0 ? index + 1 : index - 1, true);
+      });
+      root.addEventListener('pointercancel', () => (tracking = false));
+    }
+
+    goTo(0);
+    updatePlaying();
+  });
+</script>

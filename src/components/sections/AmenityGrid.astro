@@ -1,0 +1,27 @@
+---
+import type { Amenity } from '@/data/amenities';
+import Icon from '@/components/icons/Icon.astro';
+
+interface Props {
+  items: Amenity[];
+  class?: string;
+}
+
+const { items, class: className } = Astro.props;
+---
+
+<ul class:list={['grid border-t border-line sm:grid-cols-2 lg:grid-cols-3', className]}>
+  {
+    items.map((item) => (
+      <li class="flex gap-5 border-b border-line py-7 sm:pr-8 lg:py-9">
+        <span class="inline-flex size-12 shrink-0 items-center justify-center rounded-full border border-gold/50 text-gold-dark">
+          <Icon name={item.icon} size={22} strokeWidth={1.4} />
+        </span>
+        <div>
+          <h3 class="text-[1.3rem] leading-tight">{item.title}</h3>
+          <p class="mt-1.5 text-[0.98rem] text-stone">{item.text}</p>
+        </div>
+      </li>
+    ))
+  }
+</ul>

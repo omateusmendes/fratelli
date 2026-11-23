@@ -1,0 +1,100 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/sections/PageHero.astro';
+import { pageHeroPhotos } from '@/data/heroes';
+import SectionHeading from '@/components/sections/SectionHeading.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/icons/Icon.astro';
+import CtaBand from '@/components/sections/CtaBand.astro';
+import { reviews, formatScore } from '@/data/reviews';
+
+const platforms = [reviews.booking, reviews.google];
+---
+
+<BaseLayout
+  title="Avaliações | Fratelli Premium Hotel — Elói Mendes, MG"
+  description={`Nota ${formatScore(reviews.booking.score)}/10 no Booking.com e ${formatScore(reviews.google.score)}/5 no Google. Veja o que os hóspedes mais valorizam no Fratelli Premium Hotel.`}
+  breadcrumb="Avaliações"
+>
+  <PageHero
+    photo={pageHeroPhotos.avaliacoes}
+    crumb="Avaliações"
+    eyebrow="Experiência dos hóspedes"
+    title="Uma experiência reconhecida por quem já esteve aqui."
+    lead="A atenção aos detalhes faz a diferença. Limpeza, atendimento e café da manhã estão entre os aspectos mais valorizados."
+  />
+
+  <section aria-labelledby="scores-title" class="bg-cream">
+    <div class="container-site py-16 sm:py-20 lg:py-24">
+      <h2 id="scores-title" class="sr-only">Notas nas plataformas</h2>
+      <div class="grid gap-6 md:grid-cols-2">
+        {
+          platforms.map((p) => (
+            <article class="flex min-w-0 flex-col border border-line bg-paper p-6 sm:p-10">
+              <h3 class="text-[0.8rem] font-bold uppercase tracking-[0.2em] !font-sans text-stone">{p.platform}</h3>
+              <p class="mt-5 font-serif text-[3.6rem] leading-none text-ink min-[380px]:text-[4.5rem] sm:text-[5.5rem]">
+                <span class="text-gold-metal-deep">{formatScore(p.score)}</span>
+                <span class="text-[1.5rem] text-muted">/ {p.scale}</span>
+              </p>
+              <div class="mt-5 flex gap-1 text-gold" aria-hidden="true">
+                {Array.from({ length: 5 }, (_, i) => (
+                  <Icon name="star" size={18} strokeWidth={1.25} class={i < Math.round((p.score / p.scale) * 5) ? 'fill-gold' : ''} />
+                ))}
+              </div>
+              <div class="mt-auto pt-8">
+                <Button href={p.url} variant="text" trailingIcon="arrow-up-right">
+                  Ver avaliações no {p.platform}
+                </Button>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="mt-16 grid gap-10 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-4">
+          <h2 class="text-h3">Notas por critério</h2>
+          <p class="mt-3 text-[1rem] text-stone">Avaliação dos hóspedes no {reviews.booking.platform}, em escala de 0 a 10.</p>
+        </div>
+        <dl class="grid gap-7 lg:col-span-8">
+          {
+            reviews.booking.categories.map((c) => (
+              <div>
+                <div class="flex items-baseline justify-between gap-4">
+                  <dt class="font-serif text-[1.3rem] text-ink">{c.label}</dt>
+                  <dd class="text-gold-metal-deep font-serif text-[1.6rem]">{formatScore(c.score)}</dd>
+                </div>
+                <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-sand" aria-hidden="true">
+                  <div class="bg-gold-metal h-full rounded-full" style={`width: ${c.score * 10}%`} />
+                </div>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="O que os hóspedes mais valorizam" class="bg-paper">
+    <div class="container-site py-20 sm:py-24 lg:py-28">
+      <SectionHeading eyebrow="O que mais se destaca" title="Detalhes que geram confiança" />
+      <ul class="mt-12 grid gap-6 md:grid-cols-3">
+        {
+          reviews.highlights.map((h, i) => (
+            <li class="border-t border-gold pt-7">
+              <p class="font-serif text-[0.95rem] text-gold" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
+              <h3 class="mt-3 text-h3">{h.title}</h3>
+              <p class="mt-2.5 text-[1.02rem] text-stone">{h.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-14 text-[0.85rem] text-muted">
+        Notas públicas consultadas em {reviews.checkedAt}. Os indicadores são atualizados continuamente pelas plataformas e
+        podem variar.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand title="Venha viver essa experiência." />
+</BaseLayout>

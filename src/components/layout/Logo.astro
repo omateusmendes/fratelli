@@ -1,0 +1,77 @@
+---
+/**
+ * Logotipo oficial do Fratelli Premium Hotel.
+ * - layout="horizontal": moldura FPH + barra + FRATELLI / PREMIUM HOTEL
+ * - layout="stacked": monograma acima do texto, como na arte das redes do hotel
+ * - tone="dark": cores originais (fundos escuros, padrão do site)
+ * - tone="light": ouro profundo para fundos claros (apenas horizontal)
+ * Arquivos gerados a partir do PNG oficial em src/assets/brand/.
+ */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import logoOnLight from '@/assets/brand/logo-on-light.png';
+import logoOnDark from '@/assets/brand/logo-on-dark.png';
+import monogram from '@/assets/brand/monogram.png';
+import wordmark from '@/assets/brand/wordmark-on-dark.png';
+
+interface Props {
+  /** Cor do fundo onde o logo será aplicado. */
+  tone?: 'light' | 'dark';
+  layout?: 'horizontal' | 'stacked';
+  /** Largura de referência em px (a altura segue a proporção do logo). */
+  width?: number;
+  class?: string;
+  eager?: boolean;
+}
+
+const { tone = 'dark', layout = 'horizontal', width = 244, class: className, eager = false } = Astro.props;
+
+const heightFor = (img: ImageMetadata, w: number) => Math.round((w * img.height) / img.width);
+const loading = eager ? 'eager' : 'lazy';
+const src = tone === 'light' ? logoOnLight : logoOnDark;
+const monoWidth = Math.round(width * 0.36);
+---
+
+{
+  layout === 'stacked' ? (
+    <span class:list={['inline-flex select-none flex-col items-center gap-4', className]} style={`width:${width}px`}>
+      <Picture
+        src={monogram}
+        alt=""
+        width={monoWidth}
+        height={heightFor(monogram, monoWidth)}
+        densities={[1, 2]}
+        formats={['avif', 'webp']}
+        fallbackFormat="png"
+        loading={loading}
+        decoding="async"
+        class="block h-auto"
+      />
+      <Picture
+        src={wordmark}
+        alt="Fratelli Premium Hotel"
+        width={width}
+        height={heightFor(wordmark, width)}
+        densities={[1, 2]}
+        formats={['avif', 'webp']}
+        fallbackFormat="png"
+        loading={loading}
+        decoding="async"
+        class="block h-auto w-full"
+      />
+    </span>
+  ) : (
+    <Picture
+      src={src}
+      alt="Fratelli Premium Hotel"
+      width={width}
+      height={heightFor(src, width)}
+      densities={[1, 2]}
+      formats={['avif', 'webp']}
+      fallbackFormat="png"
+      loading={loading}
+      decoding="async"
+      class:list={['block h-auto max-w-full select-none', className]}
+    />
+  )
+}

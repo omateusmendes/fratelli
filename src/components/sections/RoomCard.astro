@@ -1,0 +1,57 @@
+---
+import type { Room } from '@/data/rooms';
+import Media from '@/components/ui/Media.astro';
+import Carousel from '@/components/ui/Carousel.astro';
+import Icon from '@/components/icons/Icon.astro';
+
+interface Props {
+  room: Room;
+  headingLevel?: 'h3' | 'h2';
+  /** Defasagem da troca automática, para os cartões não trocarem juntos (ms). */
+  delay?: number;
+}
+
+const { room, headingLevel: Heading = 'h3', delay = 0 } = Astro.props;
+const href = `/acomodacoes/#${room.slug}`;
+const sizes = '(min-width: 768px) 33vw, 100vw';
+---
+
+<article class="group relative flex flex-col">
+  <div class="relative aspect-[4/3] overflow-hidden">
+    {
+      room.photos.length > 0 ? (
+        <Carousel
+          photos={room.photos}
+          label={room.name}
+          variant="subtle"
+          interval={4800}
+          delay={delay}
+          sizes={sizes}
+          class="transition-transform duration-700 ease-out-soft group-hover:scale-[1.03]"
+        />
+      ) : (
+        <Media alt={room.imageAlt} label={room.name} sizes={sizes} class="h-full w-full" />
+      )
+    }
+    {
+      room.featured && (
+        <span class="bg-gold-metal absolute left-3 top-3 rounded-full px-3 py-1.5 text-[0.75rem] font-bold uppercase tracking-[0.2em] text-ink">
+          Destaque
+        </span>
+      )
+    }
+  </div>
+  <div class="flex flex-1 flex-col border-b border-line pb-6 pt-5">
+    <p class="eyebrow">{room.size} m² · até {room.guests} hóspedes</p>
+    <Heading class="mt-2.5 text-h3">
+      <a href={href} class="after:absolute after:inset-0">
+        {room.name}
+      </a>
+    </Heading>
+    <p class="mt-2.5 text-[0.98rem] text-stone">{room.summary}</p>
+    <p class="mt-auto inline-flex items-center gap-2 pt-5 text-[0.95rem] font-bold text-ink">
+      Ver detalhes
+      <Icon name="arrow-right" size={17} strokeWidth={1.75} class="text-gold transition-transform duration-300 group-hover:translate-x-1" />
+    </p>
+  </div>
+</article>

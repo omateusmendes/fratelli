@@ -1,0 +1,63 @@
+---
+/**
+ * Mapa sob demanda: o iframe do Google só é carregado após o clique,
+ * preservando performance e privacidade do visitante.
+ */
+import { hotel, fullAddress } from '@/data/hotel';
+import Icon from '@/components/icons/Icon.astro';
+---
+
+<div class="relative aspect-[4/3] overflow-hidden rounded-[3px] bg-sand sm:aspect-[16/10] lg:aspect-auto lg:h-full lg:min-h-[28rem]" data-map>
+  <svg class="absolute inset-0 h-full w-full text-line" aria-hidden="true" preserveAspectRatio="xMidYMid slice" viewBox="0 0 800 600">
+    <g fill="none" stroke="currentColor">
+      <path d="M-20 140 L820 220" stroke-width="18"></path>
+      <path d="M-20 420 L820 360" stroke-width="12"></path>
+      <path d="M180 -20 L260 620" stroke-width="14"></path>
+      <path d="M560 -20 L500 620" stroke-width="22"></path>
+      <path d="M-20 300 L820 290" stroke-width="6"></path>
+      <path d="M380 -20 L390 620" stroke-width="6"></path>
+      <path d="M680 -20 L720 620" stroke-width="6"></path>
+      <path d="M60 -20 L40 620" stroke-width="6"></path>
+    </g>
+  </svg>
+  <div class="absolute left-1/2 top-[46%] -translate-x-1/2 -translate-y-full text-gold-dark" aria-hidden="true">
+    <Icon name="map-pin" size={44} strokeWidth={1.5} class="fill-paper" />
+  </div>
+
+  <div class="absolute inset-x-4 bottom-4 flex flex-col items-start gap-3 rounded-[3px] bg-paper/95 p-4 sm:inset-x-6 sm:bottom-6 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+    <div>
+      <p class="font-serif text-[1.15rem] text-ink">{hotel.name}</p>
+      <p class="text-[0.9rem] text-stone">{fullAddress}</p>
+    </div>
+    <button
+      type="button"
+      class="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-[3px] bg-ink px-4 text-[0.9rem] font-bold text-cream transition-colors hover:bg-charcoal"
+      data-map-load
+    >
+      <Icon name="map-pin" size={17} strokeWidth={1.75} />
+      Carregar mapa interativo
+    </button>
+  </div>
+  <template data-map-template>
+    <iframe
+      title={`Mapa: ${hotel.name}, ${fullAddress}`}
+      src={hotel.googleMapsEmbedUrl}
+      class="absolute inset-0 h-full w-full border-0"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      allowfullscreen></iframe>
+  </template>
+</div>
+<p class="mt-3 text-[0.8rem] text-muted">Ao carregar o mapa, dados de navegação podem ser enviados ao Google.</p>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-map]').forEach((map) => {
+    const button = map.querySelector<HTMLButtonElement>('[data-map-load]');
+    const template = map.querySelector<HTMLTemplateElement>('[data-map-template]');
+    button?.addEventListener('click', () => {
+      if (!template) return;
+      map.replaceChildren(template.content.cloneNode(true));
+      map.querySelector('iframe')?.focus();
+    });
+  });
+</script>

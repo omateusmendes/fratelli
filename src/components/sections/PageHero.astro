@@ -1,0 +1,75 @@
+---
+/**
+ * Abertura das páginas internas: fundo escuro da marca com foto em tratamento
+ * quente (opcional), breadcrumb, rótulo, H1, texto de apoio e ações.
+ */
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Carousel from '@/components/ui/Carousel.astro';
+import type { Photo } from '@/data/photos';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead?: string;
+  /** Nome da página no breadcrumb. */
+  crumb: string;
+  /** Foto de fundo (fica à direita no desktop e atrás do texto no celular). */
+  photo?: Photo;
+}
+
+const { eyebrow, title, lead, crumb, photo } = Astro.props;
+const hasActions = Astro.slots.has('default');
+---
+
+<section class="on-dark relative isolate overflow-hidden bg-ink text-cream">
+  {
+    photo && (
+      <div class="absolute inset-0 -z-10 lg:left-auto lg:w-[60%]">
+        <Carousel
+          photos={[photo]}
+          label={title}
+          variant="subtle"
+          interval={9000}
+          zoom={1.08}
+          zoomMode="in"
+          warm
+          priority
+          sizes="(min-width: 1024px) 60vw, 100vw"
+        />
+        <div
+          class="pointer-events-none absolute inset-0 z-[2] bg-ink/70 lg:bg-transparent lg:bg-gradient-to-r lg:from-ink lg:from-[4%] lg:via-ink/60 lg:via-[38%] lg:to-ink/10"
+          aria-hidden="true"
+        />
+        <div
+          class="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-1/2 bg-gradient-to-t from-ink to-transparent lg:hidden"
+          aria-hidden="true"
+        />
+      </div>
+    )
+  }
+
+  <div class="container-site relative flex flex-col pb-14 pt-8 sm:pb-16 lg:min-h-[30rem] lg:pb-20 lg:pt-10">
+    <nav aria-label="Você está em" class="text-[0.85rem] text-cream/60">
+      <ol class="flex items-center gap-2">
+        <li>
+          <a href="/" class="-my-3 inline-flex min-h-11 items-center transition-colors hover:text-gold-light">Início</a>
+        </li>
+        <li aria-hidden="true" class="text-gold">/</li>
+        <li aria-current="page" class="text-cream/90">{crumb}</li>
+      </ol>
+    </nav>
+
+    <div class="mt-auto max-w-2xl pt-20 sm:pt-24 lg:pt-20">
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <h1 class="mt-6 text-h1 !text-cream">{title}</h1>
+      {lead && <p class="mt-6 max-w-xl text-lead text-cream/80">{lead}</p>}
+      {
+        hasActions && (
+          <div class="mt-9 flex flex-wrap gap-3">
+            <slot />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

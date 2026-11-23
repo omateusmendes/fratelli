@@ -1,0 +1,178 @@
+---
+import { nav, contactHref } from '@/data/nav';
+import { hotel } from '@/data/hotel';
+import { buildWhatsAppUrl } from '@/lib/whatsapp';
+import Logo from './Logo.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/icons/Icon.astro';
+import { Menu, X } from '@lucide/astro';
+
+const path = Astro.url.pathname;
+const isActive = (href: string, match: string[] = []) =>
+  [href, ...match].some((h) => path === h || path.startsWith(h));
+const whatsappUrl = buildWhatsAppUrl();
+---
+
+<header
+  class="on-dark sticky top-0 z-40 bg-ink text-cream [backface-visibility:hidden] [transform:translate3d(0,0,0)]"
+  data-header
+>
+  <div class="container-site flex h-[4.5rem] items-center justify-between gap-6 lg:h-[5.25rem]">
+    <a href="/" class="shrink-0" aria-label={`${hotel.name} — página inicial`}>
+      <Logo tone="dark" width={244} eager class="w-[196px] sm:w-[224px] 2xl:w-[244px]" />
+    </a>
+
+    <nav aria-label="Principal" class="hidden lg:flex lg:flex-1 lg:items-center lg:gap-7 xl:gap-9">
+      <span class="h-9 w-px bg-cream/15" aria-hidden="true"></span>
+      <ul class="flex items-center gap-7 xl:gap-10">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isActive(item.href, item.match) ? 'page' : undefined}
+                class:list={[
+                  'relative whitespace-nowrap py-2 font-serif text-[1.08rem] transition-colors duration-300 hover:text-gold-light',
+                  'after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-gold-light after:transition-transform after:duration-300',
+                  'hover:after:scale-x-100 aria-[current=page]:after:scale-x-100',
+                  isActive(item.href, item.match) ? 'text-gold-light' : 'text-cream/80',
+                ]}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <div class="hidden sm:block">
+        <Button href={contactHref} size="sm">Fale com a recepção</Button>
+      </div>
+
+      <button
+        type="button"
+        class="-mr-2 inline-flex size-11 items-center justify-center rounded-[3px] text-cream transition-colors hover:bg-charcoal hover:text-gold-light lg:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-toggle
+      >
+        <span class="sr-only" data-menu-label>Abrir menu</span>
+        <Menu size={24} stroke-width={1.5} aria-hidden="true" data-icon-open />
+        <X size={24} stroke-width={1.5} aria-hidden="true" data-icon-close class="hidden" />
+      </button>
+    </div>
+  </div>
+  <span class="brand-bar !h-px" aria-hidden="true"></span>
+</header>
+
+<!-- Fora do <header>: o cabeçalho fica em camada própria (transform), o que quebraria o position: fixed do menu -->
+<div
+    id="mobile-menu"
+    class="on-dark fixed inset-x-0 bottom-0 top-[calc(4.5rem+1px)] z-40 overflow-y-auto bg-ink text-cream lg:hidden"
+    hidden
+    data-menu
+  >
+    <nav aria-label="Menu" class="container-site flex min-h-full flex-col py-8">
+      <ul class="flex flex-col divide-y divide-cream/10 border-y border-cream/10">
+        <li>
+          <a
+            href="/"
+            aria-current={path === '/' ? 'page' : undefined}
+            class="flex items-center justify-between py-4 font-serif text-[1.6rem] text-cream aria-[current=page]:text-gold-light"
+          >
+            Início
+          </a>
+        </li>
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isActive(item.href, item.match) ? 'page' : undefined}
+                class="flex items-center justify-between py-4 font-serif text-[1.6rem] text-cream aria-[current=page]:text-gold-light"
+              >
+                {item.label}
+                <Icon name="arrow-right" size={20} class="text-gold" />
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a
+            href={contactHref}
+            aria-current={isActive(contactHref) ? 'page' : undefined}
+            class="flex items-center justify-between py-4 font-serif text-[1.6rem] text-cream aria-[current=page]:text-gold-light"
+          >
+            Contato e reservas
+            <Icon name="arrow-right" size={20} class="text-gold" />
+          </a>
+        </li>
+      </ul>
+
+      <div class="mt-auto flex flex-col gap-3 pt-10">
+        <Button href={whatsappUrl} icon="whatsapp" size="lg">Consultar disponibilidade</Button>
+        <Button href={`tel:${hotel.phone.e164}`} variant="outline-light" icon="phone" size="lg" external={false}>
+          {hotel.phone.display}
+        </Button>
+        <p class="mt-4 text-center text-sm text-cream/55">
+          {hotel.address.street} · {hotel.address.city}, {hotel.address.state}
+        </p>
+      </div>
+    </nav>
+  </div>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const label = document.querySelector<HTMLElement>('[data-menu-label]');
+  const iconOpen = document.querySelector('[data-icon-open]');
+  const iconClose = document.querySelector('[data-icon-close]');
+
+  if (toggle && menu) {
+    const focusables = () =>
+      Array.from(menu.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'));
+
+    const setOpen = (open: boolean) => {
+      menu.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+      if (label) label.textContent = open ? 'Fechar menu' : 'Abrir menu';
+      iconOpen?.classList.toggle('hidden', open);
+      iconClose?.classList.toggle('hidden', !open);
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+      if (open) focusables()[0]?.focus();
+    };
+
+    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+
+    document.addEventListener('keydown', (event) => {
+      if (menu.hidden) return;
+      if (event.key === 'Escape') {
+        setOpen(false);
+        toggle.focus();
+        return;
+      }
+      if (event.key === 'Tab') {
+        const items = [toggle, ...focusables()];
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
+    });
+
+    menu.addEventListener('click', (event) => {
+      if ((event.target as HTMLElement).closest('a')) setOpen(false);
+    });
+
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => {
+      if (e.matches) setOpen(false);
+    });
+  }
+</script>

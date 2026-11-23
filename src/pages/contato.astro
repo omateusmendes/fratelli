@@ -1,0 +1,120 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/sections/PageHero.astro';
+import { pageHeroPhotos } from '@/data/heroes';
+import AvailabilityForm from '@/components/sections/AvailabilityForm.astro';
+import Icon, { type IconName } from '@/components/icons/Icon.astro';
+import { hotel, flags } from '@/data/hotel';
+import { buildWhatsAppUrl } from '@/lib/whatsapp';
+import Faq from '@/components/sections/Faq.astro';
+import SectionHeading from '@/components/sections/SectionHeading.astro';
+import { faq } from '@/data/faq';
+
+interface Channel {
+  icon: IconName;
+  label: string;
+  value: string;
+  href: string;
+  external?: boolean;
+}
+
+const channels: Channel[] = [
+  { icon: 'whatsapp', label: 'WhatsApp da recepção', value: hotel.phone.display, href: buildWhatsAppUrl(), external: true },
+  { icon: 'phone', label: 'Telefone', value: hotel.phone.display, href: `tel:${hotel.phone.e164}` },
+  ...(hotel.email ? [{ icon: 'mail' as const, label: 'E-mail', value: hotel.email, href: `mailto:${hotel.email}` }] : []),
+  { icon: 'star', label: 'Reserva online', value: 'Ver disponibilidade no Booking', href: hotel.bookingUrl, external: true },
+  { icon: 'map-pin', label: 'Endereço', value: `${hotel.address.street} · ${hotel.address.city}, ${hotel.address.state}`, href: '/localizacao/' },
+];
+
+const schedule = [
+  { label: 'Check-in', value: hotel.schedule.checkIn },
+  { label: 'Check-out', value: hotel.schedule.checkOut },
+  { label: 'Recepção', value: hotel.schedule.reception },
+];
+---
+
+<BaseLayout
+  title="Contato e reservas | Fratelli Premium Hotel — Elói Mendes, MG"
+  description="Consulte disponibilidade no Fratelli Premium Hotel pelo WhatsApp, telefone (35) 99972-9999 ou Booking. Av. Belo Horizonte, 386, Centro, Elói Mendes (MG)."
+  breadcrumb="Contato"
+  faq={faq}
+>
+  <PageHero
+    photo={pageHeroPhotos.contato}
+    crumb="Contato"
+    eyebrow="Contato e reservas"
+    title="Sua próxima estadia começa aqui."
+    lead="Entre em contato para consultar disponibilidade, tirar dúvidas sobre as acomodações e obter mais informações sobre sua hospedagem."
+  />
+
+  <section aria-label="Formulário e canais de contato" class="bg-cream">
+    <div class="container-site grid gap-12 py-16 sm:py-20 lg:grid-cols-12 lg:gap-14 lg:py-24">
+      <div class="lg:col-span-7">
+        <AvailabilityForm />
+      </div>
+
+      <aside class="flex flex-col gap-10 lg:col-span-5" aria-label="Outros canais">
+        <div>
+          <h2 class="text-h3">Fale com a gente</h2>
+          <ul class="mt-6 divide-y divide-line border-y border-line">
+            {
+              channels.map((c) => (
+                <li>
+                  <a
+                    href={c.href}
+                    target={c.external ? '_blank' : undefined}
+                    rel={c.external ? 'noopener' : undefined}
+                    class="group flex items-center gap-4 py-5"
+                  >
+                    <span class="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-gold/50 text-gold-dark transition-colors group-hover:bg-gold group-hover:text-ink">
+                      <Icon name={c.icon} size={19} strokeWidth={1.5} />
+                    </span>
+                    <span class="min-w-0 flex-1">
+                      <span class="block text-[0.75rem] font-bold uppercase tracking-[0.16em] text-muted">{c.label}</span>
+                      <span class="block font-serif text-[1.15rem] text-ink transition-colors group-hover:text-gold-dark">{c.value}</span>
+                    </span>
+                    <Icon name={c.external ? 'arrow-up-right' : 'arrow-right'} size={18} strokeWidth={1.5} class="shrink-0 text-gold" />
+                    {c.external && <span class="sr-only">(abre em nova aba)</span>}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="border border-line bg-paper p-7">
+          <h2 class="text-[1.35rem]">Horários</h2>
+          <dl class="mt-5 grid gap-3">
+            {
+              schedule.map((s) => (
+                <div class="flex items-baseline justify-between gap-4 border-b border-line pb-3 last:border-0 last:pb-0">
+                  <dt class="text-[0.95rem] text-stone">{s.label}</dt>
+                  <dd class="font-serif text-[1.15rem] text-ink">{s.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+
+        {
+          flags.showPolicies && (
+            <div class="border border-line bg-paper p-7">
+              <h2 class="text-[1.35rem]">Políticas</h2>
+              {/* TODO(hotel): pets, berços, camas extras e taxas adicionais */}
+            </div>
+          )
+        }
+      </aside>
+    </div>
+  </section>
+  <section id="duvidas" aria-labelledby="faq-title" class="scroll-mt-28 border-t border-line bg-paper">
+    <div class="container-site grid gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:gap-16 lg:py-28">
+      <div class="lg:col-span-4">
+        <SectionHeading id="faq-title" eyebrow="Dúvidas frequentes" title="Respostas rápidas" intro="As perguntas mais comuns de quem vai se hospedar no Fratelli." />
+      </div>
+      <div class="lg:col-span-8">
+        <Faq items={faq} openFirst />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

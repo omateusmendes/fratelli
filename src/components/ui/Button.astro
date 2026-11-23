@@ -1,0 +1,72 @@
+---
+import Icon, { type IconName } from '@/components/icons/Icon.astro';
+
+type Variant = 'gold' | 'dark' | 'outline' | 'outline-light' | 'text';
+type Size = 'sm' | 'md' | 'lg';
+
+interface Props {
+  href: string;
+  variant?: Variant;
+  size?: Size;
+  icon?: IconName;
+  /** Ícone depois do texto (ex.: seta). */
+  trailingIcon?: IconName;
+  external?: boolean;
+  class?: string;
+  'aria-label'?: string;
+}
+
+const {
+  href,
+  variant = 'gold',
+  size = 'md',
+  icon,
+  trailingIcon,
+  external = /^https?:/.test(href),
+  class: className,
+  ...rest
+} = Astro.props;
+
+const base =
+  'group inline-flex items-center justify-center gap-2.5 whitespace-nowrap font-sans font-bold tracking-[0.01em] transition-colors duration-300 ease-out-soft';
+
+const variants: Record<Variant, string> = {
+  gold: 'btn-gold rounded-[3px]',
+  dark: 'rounded-[3px] bg-ink text-cream hover:bg-charcoal',
+  outline: 'rounded-[3px] border border-ink/25 text-ink hover:border-gold hover:bg-ink/[0.03]',
+  'outline-light': 'rounded-[3px] border border-cream/40 text-cream hover:border-gold-light hover:text-gold-light',
+  // área de toque ampliada (44px) com pseudo-elemento, sem mudar o visual do sublinhado
+  text: "link-underline relative !gap-2 text-ink before:absolute before:inset-x-0 before:-inset-y-[5px] before:content-['']",
+};
+
+const sizes: Record<Size, string> = {
+  sm: 'min-h-10 px-4 text-[0.9rem]',
+  md: 'min-h-12 px-6 text-[0.95rem]',
+  lg: 'min-h-14 px-7 text-[1.02rem]',
+};
+
+const sizeClass = variant === 'text' ? 'text-[1rem] py-1' : sizes[size];
+const iconSize = size === 'lg' ? 22 : 19;
+---
+
+<a
+  href={href}
+  class:list={[base, variants[variant], sizeClass, className]}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener' : undefined}
+  {...rest}
+>
+  {icon && <Icon name={icon} size={icon === 'whatsapp' ? iconSize - 2 : iconSize} strokeWidth={1.75} class="shrink-0" />}
+  <span><slot /></span>
+  {
+    trailingIcon && (
+      <Icon
+        name={trailingIcon}
+        size={18}
+        strokeWidth={1.75}
+        class="shrink-0 transition-transform duration-300 ease-out-soft group-hover:translate-x-0.5"
+      />
+    )
+  }
+  {external && <span class="sr-only"> (abre em nova aba)</span>}
+</a>

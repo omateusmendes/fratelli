@@ -1,0 +1,90 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/sections/PageHero.astro';
+import { pageHeroPhotos } from '@/data/heroes';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Icon, { type IconName } from '@/components/icons/Icon.astro';
+import CtaBand from '@/components/sections/CtaBand.astro';
+import { flags } from '@/data/hotel';
+
+const points: { icon: IconName; title: string; text: string }[] = [
+  { icon: 'croissant', title: 'Estilo buffet', text: 'Variedade à mesa para você montar o café do seu jeito.' },
+  { icon: 'sun', title: 'Para começar bem', text: 'Um momento tranquilo antes dos compromissos ou dos passeios.' },
+  { icon: 'heart', title: 'Valorizado pelos hóspedes', text: 'O café da manhã está entre os aspectos mais elogiados da estadia.' },
+];
+
+const restaurantPoints: { icon: IconName; title: string; text: string }[] = [
+  { icon: 'utensils', title: 'Culinária brasileira', text: 'Pratos preparados para quem prefere fazer a refeição no próprio hotel.' },
+  { icon: 'bell', title: 'Serviço de quarto', text: 'Atendimento no conforto da sua acomodação.' },
+  { icon: 'sun', title: 'Salão amplo e iluminado', text: 'Ambiente claro e acolhedor, com mesas para todos os momentos do dia.' },
+  flags.showDinner
+    ? { icon: 'clock', title: 'Jantar', text: 'O restaurante também serve o jantar. Consulte os horários na recepção.' }
+    : { icon: 'concierge', title: 'Orientação da recepção', text: 'A equipe informa horários e opções do restaurante durante a sua estadia.' },
+];
+---
+
+<BaseLayout
+  title="Café da manhã | Fratelli Premium Hotel — Elói Mendes, MG"
+  description="Café da manhã em estilo buffet e restaurante com culinária brasileira no Fratelli Premium Hotel, Centro de Elói Mendes (MG)."
+  breadcrumb="Café da manhã"
+>
+  <PageHero
+    photo={pageHeroPhotos.cafe}
+    crumb="Café da manhã"
+    eyebrow="Café da manhã"
+    title="Comece o dia com sabor e tranquilidade."
+    lead="Um bom dia merece um bom café da manhã. Opções em estilo buffet, com variedade para começar a manhã de forma agradável."
+  />
+
+  <section aria-labelledby="breakfast-points" class="bg-cream">
+    <div class="container-site py-16 sm:py-20 lg:py-24">
+      <h2 id="breakfast-points" class="sr-only">Destaques do café da manhã</h2>
+      <ul class="grid gap-10 md:grid-cols-3 md:gap-8">
+        {
+          points.map((p) => (
+            <li class="border-t border-gold pt-7">
+              <Icon name={p.icon} size={28} strokeWidth={1.3} class="text-gold" />
+              <h3 class="mt-5 text-h3">{p.title}</h3>
+              <p class="mt-2.5 text-[1.02rem] text-stone">{p.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        !flags.breakfastIncluded && (
+          <p class="mt-14 flex items-start gap-3 border-l-2 border-gold bg-paper px-5 py-4 text-[0.98rem] text-charcoal">
+            <Icon name="info" size={20} strokeWidth={1.5} class="mt-0.5 shrink-0 text-gold-dark" />
+            Consulte a recepção sobre a inclusão do café da manhã na sua tarifa e os horários de funcionamento.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <section aria-labelledby="restaurant-title" class="bg-paper">
+    <div class="container-site grid gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:items-center lg:gap-16 lg:py-28">
+      <div class="lg:col-span-5">
+        <Eyebrow>Restaurante</Eyebrow>
+        <h2 id="restaurant-title" class="mt-6 text-h2">Sabores da culinária brasileira.</h2>
+        <p class="mt-6 text-[1.08rem] text-stone">
+          O restaurante do hotel prepara pratos da culinária brasileira para quem prefere aproveitar a refeição sem sair
+          do hotel{flags.showDinner ? ', com serviço de jantar' : ''}. Hóspedes também contam com serviço de quarto.
+        </p>
+      </div>
+      <ul class="grid gap-px overflow-hidden rounded-[3px] bg-line sm:grid-cols-2 lg:col-span-7">
+        {
+          restaurantPoints.map((p) => (
+            <li class="flex flex-col gap-4 bg-cream p-7 sm:p-8">
+              <Icon name={p.icon} size={26} strokeWidth={1.3} class="text-gold" />
+              <h3 class="text-[1.3rem] leading-tight">{p.title}</h3>
+              <p class="text-[0.98rem] text-stone">{p.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>

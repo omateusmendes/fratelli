@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# TODO(hotel): atualizar com o domínio definitivo
+Sitemap: https://www.fratellipremiumhotel.com.br/sitemap-index.xml

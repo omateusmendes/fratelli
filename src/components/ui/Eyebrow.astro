@@ -1,0 +1,35 @@
+---
+/**
+ * Rótulo em caixa alta espaçada com fio dourado.
+ * - stacked: texto com fio curto abaixo (blocos alinhados à esquerda)
+ * - centered: texto entre dois fios (títulos centralizados)
+ */
+interface Props {
+  variant?: 'stacked' | 'centered' | 'inline';
+  class?: string;
+}
+const { variant = 'stacked', class: className } = Astro.props;
+---
+
+{
+  variant === 'centered' ? (
+    <p class:list={['flex items-center justify-center gap-5', className]}>
+      <span class="rule-fade-l h-px w-10 sm:w-24 md:w-40" aria-hidden="true" />
+      <span class="eyebrow text-center">
+        <slot />
+      </span>
+      <span class="rule-fade-r h-px w-10 sm:w-24 md:w-40" aria-hidden="true" />
+    </p>
+  ) : variant === 'inline' ? (
+    <p class:list={['eyebrow', className]}>
+      <slot />
+    </p>
+  ) : (
+    <div class:list={['flex flex-col gap-4', className]}>
+      <p class="eyebrow">
+        <slot />
+      </p>
+      <span class="rule-gold" aria-hidden="true" />
+    </div>
+  )
+}

@@ -1,0 +1,252 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Media from '@/components/ui/Media.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/icons/Icon.astro';
+import FeatureStrip from '@/components/sections/FeatureStrip.astro';
+import SectionHeading from '@/components/sections/SectionHeading.astro';
+import RoomCard from '@/components/sections/RoomCard.astro';
+import RatingsBand from '@/components/sections/RatingsBand.astro';
+import CtaBand from '@/components/sections/CtaBand.astro';
+import { hotel } from '@/data/hotel';
+import { rooms } from '@/data/rooms';
+import { commonPhotos, type Photo } from '@/data/photos';
+import { reviews, formatScore } from '@/data/reviews';
+import Carousel from '@/components/ui/Carousel.astro';
+import Faq from '@/components/sections/Faq.astro';
+import type { IconName } from '@/components/icons/Icon.astro';
+import { homeFaq } from '@/data/faq';
+import { buildWhatsAppUrl } from '@/lib/whatsapp';
+
+const locationPoints: { icon: IconName; text: string }[] = [
+  { icon: 'map-pin', text: 'No Centro da cidade' },
+  { icon: 'car', text: 'Estacionamento privativo gratuito' },
+  { icon: 'navigation', text: 'Prático para a região de Varginha' },
+];
+
+const suite = rooms.find((r) => r.featured);
+
+// Fotos do topo, com ponto de foco para afastar bordas pouco elegantes
+// (ar-condicionado, poltrona cortada) e conduzir o zoom lento.
+const heroFocus = ['64% 70%', '58% 62%'];
+const heroPhotos: Photo[] = [
+  ...(suite?.photos.slice(0, 2).map((p, i) => ({ ...p, focus: heroFocus[i] })) ?? []),
+  { ...commonPhotos.recepcao, focus: '62% 55%' },
+];
+
+const ratingLine = [
+  `${formatScore(reviews.booking.score)} ${reviews.booking.platform}`,
+  `${formatScore(reviews.google.score)} ${reviews.google.platform}`,
+  `Recepção ${hotel.schedule.reception}`,
+];
+---
+
+<BaseLayout
+  title="Fratelli Premium Hotel | Hotel no Centro de Elói Mendes, MG"
+  description="Hotel no Centro de Elói Mendes (MG): Quarto Duplo, Deluxe e Suíte com Hidromassagem, café da manhã, Wi-Fi e estacionamento gratuitos e recepção 24h."
+  hotelSchema
+  faq={homeFaq}
+>
+  <!-- Hero -->
+  <section data-hide-float class="on-dark relative isolate overflow-hidden bg-ink text-cream">
+    <!-- Celular: foto de fundo atrás do texto · Desktop: foto à direita -->
+    <div class="hero-photo absolute inset-x-0 top-0 -z-10 h-[52svh] sm:h-[56svh] lg:inset-y-0 lg:left-auto lg:h-auto lg:w-[62%]">
+      <Carousel
+        photos={heroPhotos}
+        label="Fratelli Premium Hotel"
+        variant="subtle"
+        interval={7000}
+        zoom={1.12}
+        zoomMode="in"
+        warm
+        priority
+        sizes="(min-width: 1024px) 62vw, 100vw"
+      />
+      <div
+        class="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-t from-ink from-[3%] via-ink/50 via-[42%] to-ink/10 lg:bg-gradient-to-r lg:from-ink lg:from-[2%] lg:via-ink/55 lg:via-[34%] lg:to-transparent lg:to-[72%]"
+        aria-hidden="true"
+      >
+      </div>
+    </div>
+
+    <div class="container-site relative grid items-end pb-12 pt-[38svh] sm:pb-16 sm:pt-[42svh] lg:min-h-[min(46rem,calc(100svh-5.25rem))] lg:items-center lg:py-24">
+      <div class="max-w-xl">
+        <span class="rule-gold" aria-hidden="true"></span>
+        <h1 class="mt-8 text-display !text-cream">
+          Seu descanso tem endereço em <span class="text-gold-metal">Elói&nbsp;Mendes.</span>
+        </h1>
+        <p class="mt-6 max-w-md text-lead text-cream/80">
+          Conforto, atendimento acolhedor e praticidade no Centro da cidade, no Sul de Minas.
+        </p>
+        <div class="mt-10 flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:gap-8">
+          <Button href={buildWhatsAppUrl()} icon="whatsapp" size="lg">Consultar disponibilidade</Button>
+          <Button href="/acomodacoes/" variant="text" trailingIcon="arrow-right" class="!text-cream hover:!text-gold-light">
+            Conheça as acomodações
+          </Button>
+        </div>
+
+        <a
+          href="/avaliacoes/"
+          class="group mt-12 inline-flex flex-wrap items-center gap-x-6 gap-y-2 border-t sm:gap-x-4 border-cream/15 pt-6 text-[0.75rem] font-bold uppercase tracking-[0.2em] text-cream/65 transition-colors hover:text-cream"
+          aria-label={`Avaliações: ${ratingLine.join(', ')}`}
+        >
+          {
+            ratingLine.map((item, i) => (
+              <>
+                {i > 0 && <span class="hidden h-3 w-px bg-gold/40 sm:block" aria-hidden="true" />}
+                <span>{item}</span>
+              </>
+            ))
+          }
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <FeatureStrip />
+
+  <!-- Boas-vindas -->
+  <section aria-labelledby="welcome-title" class="bg-cream">
+    <div class="container-site grid gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:items-center lg:gap-16 lg:py-32">
+      <div class="lg:col-span-5">
+        <Eyebrow>Bem-vindo ao Fratelli</Eyebrow>
+        <h2 id="welcome-title" class="mt-6 text-h2">Sinta-se bem.<br />Sinta-se acolhido.</h2>
+        <p class="mt-6 text-[1.08rem] text-stone">
+          No Centro de Elói Mendes, o Fratelli Premium Hotel reúne acomodações confortáveis, atendimento dedicado e
+          os serviços essenciais para quem viaja a trabalho ou busca momentos de descanso.
+        </p>
+        <div class="mt-9">
+          <Button href="/sobre/" variant="text" trailingIcon="arrow-right">Conheça o hotel</Button>
+        </div>
+      </div>
+      <div class="lg:col-span-7">
+        <div class="aspect-[4/3] overflow-hidden lg:aspect-[16/11]">
+          <Media image={commonPhotos.recepcao.src} alt={commonPhotos.recepcao.alt} label="Recepção" sizes="(min-width: 1024px) 58vw, 100vw" class="h-full w-full" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Acomodações -->
+  <section aria-label="Acomodações" class="bg-paper">
+    <div class="container-site py-20 sm:py-24 lg:py-28">
+      <SectionHeading
+        eyebrow="Acomodações"
+        title="Um convite para descansar"
+        intro="Três categorias, de 28 a 40 m², pensadas para diferentes formas de viajar."
+        align="center"
+      />
+      <div class="mt-14 grid gap-10 md:grid-cols-3 md:gap-6 lg:gap-8">
+        {rooms.map((room, i) => <RoomCard room={room} delay={i * 1600} />)}
+      </div>
+      <div class="mt-14 flex justify-center">
+        <Button href="/acomodacoes/" variant="outline" size="lg">Conheça as acomodações</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Café da manhã -->
+  <section aria-labelledby="breakfast-title" class="bg-cream">
+    <div class="container-site grid gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:items-center lg:gap-16 lg:py-28">
+      <div class="lg:order-2 lg:col-span-5">
+        <Eyebrow>Café da manhã</Eyebrow>
+        <h2 id="breakfast-title" class="mt-6 text-h2">Comece o dia com sabor e tranquilidade.</h2>
+        <p class="mt-6 text-[1.08rem] text-stone">
+          Um bom dia merece um bom café da manhã. Opções em estilo buffet, com variedade para começar a manhã de forma
+          agradável antes dos seus compromissos ou passeios.
+        </p>
+        <div class="mt-9">
+          <Button href="/cafe-da-manha/" variant="text" trailingIcon="arrow-right">Sobre o café da manhã</Button>
+        </div>
+      </div>
+      <div class="lg:order-1 lg:col-span-7">
+        <div class="aspect-[4/3] overflow-hidden lg:aspect-[16/11]">
+          <Media image={commonPhotos.salaoCafe.src} alt={commonPhotos.salaoCafe.alt} label="Café da manhã" sizes="(min-width: 1024px) 58vw, 100vw" class="h-full w-full" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <RatingsBand />
+
+  <!-- Localização -->
+  <section aria-labelledby="location-title" class="on-dark relative isolate overflow-hidden bg-ink text-cream">
+    <!-- Mapa estilizado em fios dourados -->
+    <svg
+      class="absolute inset-y-0 right-0 -z-10 hidden h-full w-[58%] text-gold/35 lg:block"
+      aria-hidden="true"
+      preserveAspectRatio="xMidYMid slice"
+      viewBox="0 0 800 600"
+    >
+      <g fill="none" stroke="currentColor" stroke-linecap="round">
+        <path d="M-20 160 L820 240" stroke-width="3" vector-effect="non-scaling-stroke"></path>
+        <path d="M-20 430 L820 370" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+        <path d="M200 -20 L270 620" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+        <path d="M560 -20 L500 620" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+        <path d="M-20 300 L820 290" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+        <path d="M390 -20 L400 620" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+        <path d="M690 -20 L730 620" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+        <path d="M80 -20 L40 620" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+        <circle cx="440" cy="300" r="120" stroke-width="1" vector-effect="non-scaling-stroke"></circle>
+        <circle cx="440" cy="300" r="220" stroke-width="1" stroke-dasharray="2 8" vector-effect="non-scaling-stroke"></circle>
+      </g>
+    </svg>
+    <div
+      class="pointer-events-none absolute inset-y-0 right-0 -z-10 hidden w-[58%] bg-gradient-to-r from-ink to-transparent lg:block"
+      aria-hidden="true"
+    >
+    </div>
+    <div class="absolute right-[24%] top-1/2 -z-10 hidden -translate-y-[62%] lg:block" aria-hidden="true">
+      <span class="absolute left-1/2 top-[calc(100%-6px)] h-3 w-10 -translate-x-1/2 rounded-full bg-gold/20 blur-sm"></span>
+      <Icon name="map-pin" size={52} strokeWidth={1.25} class="text-gold-light" />
+    </div>
+
+    <div class="container-site py-20 sm:py-24 lg:py-28">
+      <div class="max-w-xl">
+        <Eyebrow>Nossa localização</Eyebrow>
+        <h2 id="location-title" class="mt-6 text-h2 !text-cream">No Centro de Elói Mendes, perto do que importa.</h2>
+        <address class="mt-8 font-serif text-[1.45rem] leading-snug not-italic text-cream sm:text-[1.6rem]">
+          {hotel.address.street}<br />
+          <span class="text-cream/60">{hotel.address.district} · {hotel.address.city}, {hotel.address.state}</span>
+        </address>
+
+        <ul class="mt-9 grid gap-4 border-t border-cream/15 pt-8 sm:grid-cols-3 sm:gap-6">
+          {
+            locationPoints.map((p) => (
+              <li class="flex items-start gap-3 text-[0.98rem] text-cream/80 sm:flex-col sm:gap-2.5">
+                <Icon name={p.icon} size={22} strokeWidth={1.4} class="shrink-0 text-gold-light" />
+                {p.text}
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="mt-10 flex flex-wrap gap-3">
+          <Button href={hotel.directionsUrl} icon="navigation">Como chegar</Button>
+          <Button href="/localizacao/" variant="outline-light">Ver no mapa</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dúvidas frequentes -->
+  <section aria-labelledby="faq-home-title" class="bg-cream">
+    <div class="container-site grid gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:gap-16 lg:py-28">
+      <div class="lg:col-span-4">
+        <SectionHeading id="faq-home-title" eyebrow="Dúvidas frequentes" title="Antes de chegar" />
+        <p class="mt-5 text-[1.02rem] text-stone">
+          Não encontrou o que procurava? A recepção responde pelo WhatsApp a qualquer hora.
+        </p>
+        <div class="mt-8">
+          <Button href="/contato/#duvidas" variant="text" trailingIcon="arrow-right">Ver todas as dúvidas</Button>
+        </div>
+      </div>
+      <div class="lg:col-span-8">
+        <Faq items={homeFaq} />
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>

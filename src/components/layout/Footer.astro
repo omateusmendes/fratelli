@@ -1,0 +1,95 @@
+---
+import { hotel, fullAddress } from '@/data/hotel';
+import { footerNav } from '@/data/nav';
+import { buildWhatsAppUrl } from '@/lib/whatsapp';
+import Logo from './Logo.astro';
+import Icon from '@/components/icons/Icon.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="on-dark bg-ink text-cream/75">
+  <span class="brand-bar" aria-hidden="true"></span>
+  <div class="container-site grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-10 lg:py-20">
+    <div class="flex flex-col items-start gap-7">
+      <a href="/" aria-label={`${hotel.name} — página inicial`}>
+        <Logo layout="stacked" width={200} />
+      </a>
+      <p class="max-w-xs text-[0.95rem] leading-relaxed">
+        Conforto, atendimento acolhedor e praticidade no Centro de Elói Mendes, Minas Gerais.
+      </p>
+    </div>
+
+    <nav aria-label="Rodapé">
+      <h2 class="eyebrow mb-5 !font-sans">Navegação</h2>
+      <ul class="grid text-[0.95rem]">
+        {
+          footerNav.map((item) => (
+            <li>
+              <a href={item.href} class="inline-flex min-h-10 items-center transition-colors hover:text-gold-light">
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div>
+      <h2 class="eyebrow mb-5 !font-sans">Contato</h2>
+      <ul class="grid gap-1 text-[0.95rem]">
+        <li>
+          <a href={buildWhatsAppUrl()} target="_blank" rel="noopener" class="inline-flex min-h-11 items-center gap-2.5 transition-colors hover:text-gold-light">
+            <Icon name="whatsapp" size={18} class="text-gold-light" />
+            WhatsApp da recepção<span class="sr-only"> (abre em nova aba)</span>
+          </a>
+        </li>
+        <li>
+          <a href={`tel:${hotel.phone.e164}`} class="inline-flex min-h-11 items-center gap-2.5 transition-colors hover:text-gold-light">
+            <Icon name="phone" size={18} class="text-gold-light" />
+            {hotel.phone.display}
+          </a>
+        </li>
+        {
+          hotel.email && (
+            <li>
+              <a href={`mailto:${hotel.email}`} class="inline-flex min-h-11 items-center gap-2.5 transition-colors hover:text-gold-light">
+                <Icon name="mail" size={18} class="text-gold-light" />
+                {hotel.email}
+              </a>
+            </li>
+          )
+        }
+        <li>
+          <a href="/localizacao/" class="inline-flex min-h-11 items-start gap-2.5 py-2 transition-colors hover:text-gold-light">
+            <Icon name="map-pin" size={18} class="mt-0.5 shrink-0 text-gold-light" />
+            <span>{hotel.address.street}<br />{hotel.address.district} · {hotel.address.city}, {hotel.address.state}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="eyebrow mb-5 !font-sans">Horários</h2>
+      <dl class="grid gap-3 text-[0.95rem]">
+        <div>
+          <dt class="text-cream/55">Check-in</dt>
+          <dd class="text-cream">{hotel.schedule.checkIn}</dd>
+        </div>
+        <div>
+          <dt class="text-cream/55">Check-out</dt>
+          <dd class="text-cream">{hotel.schedule.checkOut}</dd>
+        </div>
+        <div>
+          <dt class="text-cream/55">Recepção</dt>
+          <dd class="text-cream">{hotel.schedule.reception}</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="border-t border-cream/10">
+    <div class="container-site flex flex-col gap-2 py-6 text-[0.8rem] text-cream/55 sm:flex-row sm:items-center sm:justify-between">
+      <p>© {year} {hotel.name} · {fullAddress}</p>    </div>
+  </div>
+</footer>

@@ -1,0 +1,23 @@
+---
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+  align?: 'left' | 'center';
+  as?: 'h2' | 'h3';
+  /** id do título, para uso com aria-labelledby na seção. */
+  id?: string;
+  class?: string;
+}
+
+const { eyebrow, title, intro, align = 'left', as: Tag = 'h2', id, class: className } = Astro.props;
+const centered = align === 'center';
+---
+
+<header class:list={[centered ? 'mx-auto max-w-3xl text-center' : 'max-w-2xl', className]}>
+  {eyebrow && <Eyebrow variant={centered ? 'centered' : 'stacked'}>{eyebrow}</Eyebrow>}
+  <Tag id={id} class:list={['text-h2', eyebrow && (centered ? 'mt-4' : 'mt-6')]}>{title}</Tag>
+  {intro && <p class:list={['mt-5 text-lead text-stone', centered && 'mx-auto max-w-2xl']}>{intro}</p>}
+</header>

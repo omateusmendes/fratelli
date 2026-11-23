@@ -1,0 +1,79 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/sections/PageHero.astro';
+import { pageHeroPhotos } from '@/data/heroes';
+import MapFacade from '@/components/sections/MapFacade.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon, { type IconName } from '@/components/icons/Icon.astro';
+import CtaBand from '@/components/sections/CtaBand.astro';
+import { hotel } from '@/data/hotel';
+
+const tips: { icon: IconName; title: string; text: string }[] = [
+  {
+    icon: 'map-pin',
+    title: 'No Centro da cidade',
+    text: 'Endereço na Avenida Belo Horizonte, com fácil acesso para quem chega a Elói Mendes.',
+  },
+  {
+    icon: 'car',
+    title: 'Estacionamento gratuito',
+    text: 'Vagas privativas para hóspedes, sem custo adicional.',
+  },
+  {
+    icon: 'navigation',
+    title: 'Região de Varginha',
+    text: 'Uma base prática para compromissos e passeios pela cidade e pela região.',
+  },
+];
+---
+
+<BaseLayout
+  title="Localização | Fratelli Premium Hotel — Elói Mendes, MG"
+  description="Fratelli Premium Hotel: Av. Belo Horizonte, 386, Centro, Elói Mendes (MG). Localização prática para quem visita a cidade e a região de Varginha."
+  breadcrumb="Localização"
+>
+  <PageHero
+    photo={pageHeroPhotos.localizacao}
+    crumb="Localização"
+    eyebrow="Nossa localização"
+    title="No Centro de Elói Mendes, perto do que importa."
+    lead="Uma localização prática para quem visita a cidade e a região de Varginha."
+  />
+
+  <section aria-labelledby="address-title" class="bg-cream">
+    <div class="container-site grid gap-10 py-16 sm:py-20 lg:grid-cols-12 lg:gap-14 lg:py-24">
+      <div class="flex flex-col lg:col-span-5">
+        <h2 id="address-title" class="text-h3">Endereço</h2>
+        <address class="mt-5 font-serif text-[1.6rem] leading-snug text-ink not-italic">
+          {hotel.address.street}<br />
+          <span class="text-stone">{hotel.address.district} · {hotel.address.city}, {hotel.address.state}</span>
+          {hotel.address.postalCode && <><br /><span class="text-stone">CEP {hotel.address.postalCode}</span></>}
+        </address>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <Button href={hotel.directionsUrl} variant="dark" icon="navigation">Como chegar</Button>
+          <Button href={hotel.googleMapsUrl} variant="outline" trailingIcon="arrow-up-right">Abrir no Google Maps</Button>
+        </div>
+
+        <ul class="mt-12 grid gap-7 border-t border-line pt-10">
+          {
+            tips.map((t) => (
+              <li class="flex gap-4">
+                <Icon name={t.icon} size={22} strokeWidth={1.4} class="mt-1 shrink-0 text-gold-dark" />
+                <div>
+                  <h3 class="text-[1.25rem] leading-tight">{t.title}</h3>
+                  <p class="mt-1.5 text-[0.98rem] text-stone">{t.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="lg:col-span-7">
+        <MapFacade />
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Vai visitar Elói Mendes?" text="Fale com a recepção e garanta sua acomodação no Centro da cidade." />
+</BaseLayout>
