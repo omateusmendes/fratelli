@@ -49,7 +49,8 @@ Todo o conteúdo variável fica em `src/data/`:
   - `logo-on-light.png`: ouro profundo, usado no header creme.
   - `logo-on-dark.png`: cores originais, usado no rodapé.
   - `monogram.png`: moldura FPH, base dos ícones.
-- Favicon, apple-touch-icon, `icon-512.png` e `og-image.png` em `public/` foram gerados a partir do logo.
+- Favicon, apple-touch-icon e `icon-512.png` em `public/` foram gerados a partir do logo.
+- **Imagem de compartilhamento (OpenGraph):** `public/og-image.jpg` (1200×630, ~80 KB). É gerada por `npm run og` (`scripts/generate-og.mjs`) com as fontes, as cores e o logo do site. Para trocar a foto ou o texto (por exemplo, quando chegarem fotos profissionais), edite o script e rode o comando de novo.
 - Os tons de dourado e os degradês (`--gradient-gold`, `--gradient-gold-deep`) estão em `src/styles/global.css`, amostrados do logo.
 - Utilitários disponíveis:
   - `bg-gold-metal`: fundo metálico.
