@@ -14,7 +14,8 @@ export default defineConfig({
   trailingSlash: 'always',
   build: {
     format: 'directory',
-    inlineStylesheets: 'auto',
+    // CSS embutido no HTML: elimina a requisição que bloqueava a primeira pintura
+    inlineStylesheets: 'always',
   },
   devToolbar: {
     enabled: false,

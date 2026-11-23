@@ -1,6 +1,6 @@
-@import '@fontsource-variable/newsreader/opsz.css';
+/* Newsreader só com o eixo de peso (57 KB) — a versão com eixo óptico tinha 129 KB */
+@import '@fontsource-variable/newsreader/wght.css';
 @import '@fontsource/lato/latin-400.css';
-@import '@fontsource/lato/latin-400-italic.css';
 @import '@fontsource/lato/latin-700.css';
 @import 'tailwindcss';
 

@@ -1,6 +1,6 @@
 ---
 import '@/styles/global.css';
-import newsreaderWoff2 from '@fontsource-variable/newsreader/files/newsreader-latin-opsz-normal.woff2?url';
+import newsreaderWoff2 from '@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2?url';
 import latoWoff2 from '@fontsource/lato/files/lato-latin-400-normal.woff2?url';
 import SEO from '@/components/layout/SEO.astro';
 import Header from '@/components/layout/Header.astro';
@@ -35,6 +35,25 @@ const { title, description, breadcrumb, hotelSchema = false, noindex = false, fa
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="preload" href={newsreaderWoff2} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={latoWoff2} as="font" type="font/woff2" crossorigin />
+    <!--
+      Movimento sob demanda: animações (zoom lento e troca automática de fotos)
+      só começam após a primeira interação ou alguns segundos depois do carregamento.
+      Assim a primeira renderização fica estável e rápida (Speed Index/LCP).
+    -->
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        var events = ['pointerdown', 'pointermove', 'keydown', 'touchstart', 'wheel', 'scroll'];
+        function start() {
+          if (root.classList.contains('motion-ok')) return;
+          root.classList.add('motion-ok');
+          events.forEach(function (e) { removeEventListener(e, start, true); });
+          dispatchEvent(new Event('motion-ok'));
+        }
+        events.forEach(function (e) { addEventListener(e, start, { capture: true, passive: true }); });
+        addEventListener('load', function () { setTimeout(start, 4500); });
+      })();
+    </script>
     <SEO
       title={title}
       description={description}

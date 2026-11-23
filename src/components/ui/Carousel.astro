@@ -211,7 +211,12 @@ const widthsFor = (w: number) => {
     transition: none;
   }
 
+  /* Antes do movimento liberado (.motion-ok), a foto ativa fica parada no quadro inicial */
   .carousel-zoom-in .carousel-slide[data-active] .carousel-img {
+    transform: scale(1.02);
+  }
+
+  .motion-ok .carousel-zoom-in .carousel-slide[data-active] .carousel-img {
     animation: carousel-kenburns var(--carousel-zoom-duration) cubic-bezier(0.2, 0.6, 0.35, 1) both;
   }
 
@@ -406,10 +411,14 @@ const widthsFor = (w: number) => {
       fill.setAttribute('data-running', '');
     };
 
+    // A troca automática só começa depois que o movimento é liberado (ver BaseLayout)
+    const motionReady = () => document.documentElement.classList.contains('motion-ok');
     const updatePlaying = () => {
-      const playing = !userPaused && !hovering && !focused && inView && !document.hidden && !reduceMotion.matches;
+      const playing =
+        motionReady() && !userPaused && !hovering && !focused && inView && !document.hidden && !reduceMotion.matches;
       root.toggleAttribute('data-playing', playing);
     };
+    window.addEventListener('motion-ok', updatePlaying);
 
     const goTo = (next: number, announce = false) => {
       index = (next + total) % total;
