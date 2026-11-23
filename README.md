@@ -50,7 +50,7 @@ Todo o conteúdo variável fica em `src/data/`:
   - `logo-on-dark.png`: cores originais, usado no rodapé.
   - `monogram.png`: moldura FPH, base dos ícones.
 - Favicon, apple-touch-icon e `icon-512.png` em `public/` foram gerados a partir do logo.
-- **Imagem de compartilhamento (OpenGraph):** `public/og-image.jpg` (1200×630, ~80 KB). É gerada por `npm run og` (`scripts/generate-og.mjs`) com as fontes, as cores e o logo do site. Para trocar a foto ou o texto (por exemplo, quando chegarem fotos profissionais), edite o script e rode o comando de novo.
+- **Imagem de compartilhamento (OpenGraph):** `public/og-image.jpg` (1200×630, ~140 KB), a arte fornecida pelo cliente. Para trocá-la, substitua o arquivo mantendo o nome, as dimensões 1200×630 e o tamanho abaixo de 300 KB (limite prático do WhatsApp).
 - Os tons de dourado e os degradês (`--gradient-gold`, `--gradient-gold-deep`) estão em `src/styles/global.css`, amostrados do logo.
 - Utilitários disponíveis:
   - `bg-gold-metal`: fundo metálico.
