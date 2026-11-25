@@ -68,15 +68,23 @@ const specs: { icon: IconName; label: string; value: string }[] = [
       <h2 id={`${room.slug}-title`} class:list={['mt-3 text-h2', dark && '!text-cream']}>{room.name}</h2>
       <p class:list={['mt-5 text-[1.05rem]', dark ? 'text-cream/80' : 'text-stone']}>{room.description}</p>
 
-      <dl class:list={['mt-8 grid grid-cols-3 border-y', dark ? 'border-cream/15' : 'border-line']}>
+      <!-- Especificações em linhas: rótulo à esquerda, valor à direita (legível em qualquer largura) -->
+      <dl class:list={['mt-8 divide-y border-y', dark ? 'divide-cream/15 border-cream/15' : 'divide-line border-line']}>
         {
-          specs.map((s, i) => (
-            <div class:list={['py-4', i > 0 && 'border-l pl-4', dark ? 'border-cream/15' : 'border-line']}>
-              <dt class:list={['flex items-center gap-1.5 text-[0.75rem] font-bold uppercase tracking-[0.16em]', dark ? 'text-cream/55' : 'text-muted']}>
-                <Icon name={s.icon} size={15} strokeWidth={1.5} class="text-gold" />
+          specs.map((s) => (
+            <div class="flex items-baseline justify-between gap-6 py-3.5">
+              <dt
+                class:list={[
+                  'flex shrink-0 items-center gap-2 text-[0.75rem] font-bold uppercase tracking-[0.16em]',
+                  dark ? 'text-cream/60' : 'text-muted',
+                ]}
+              >
+                <Icon name={s.icon} size={16} strokeWidth={1.5} class="relative top-[2px] text-gold" />
                 {s.label}
               </dt>
-              <dd class:list={['mt-1.5 font-serif text-[1.05rem] leading-snug', dark ? 'text-cream' : 'text-ink']}>{s.value}</dd>
+              <dd class:list={['text-right font-serif text-[1.08rem] leading-snug', dark ? 'text-cream' : 'text-ink']}>
+                {s.value}
+              </dd>
             </div>
           ))
         }

@@ -31,23 +31,23 @@ const { showLink = true } = Astro.props;
 
     <div class="lg:col-span-7">
       <div class="grid grid-cols-2 gap-px overflow-hidden rounded-[3px] bg-line">
-        <div class="bg-paper p-6 sm:p-8">
-          <p class="text-[0.78rem] font-bold uppercase tracking-[0.18em] text-muted">{reviews.booking.platform}</p>
-          <p class="mt-3 font-serif text-[3.4rem] leading-none text-ink sm:text-[4.2rem]">
+        <div class="min-w-0 bg-paper p-4 min-[380px]:p-6 sm:p-8">
+          <p class="text-[0.75rem] font-bold uppercase tracking-[0.1em] text-muted min-[380px]:tracking-[0.18em] sm:text-[0.78rem]">{reviews.booking.platform}</p>
+          <p class="mt-3 font-serif text-[2.9rem] leading-none text-ink min-[380px]:text-[3.4rem] sm:text-[4.2rem]">
             {formatScore(reviews.booking.score)}<span class="ml-1 text-[1.3rem] text-muted">/{reviews.booking.scale}</span>
           </p>
         </div>
-        <div class="bg-paper p-6 sm:p-8">
-          <p class="text-[0.78rem] font-bold uppercase tracking-[0.18em] text-muted">{reviews.google.platform}</p>
-          <p class="mt-3 font-serif text-[3.4rem] leading-none text-ink sm:text-[4.2rem]">
+        <div class="min-w-0 bg-paper p-4 min-[380px]:p-6 sm:p-8">
+          <p class="text-[0.75rem] font-bold uppercase tracking-[0.1em] text-muted min-[380px]:tracking-[0.18em] sm:text-[0.78rem]">{reviews.google.platform}</p>
+          <p class="mt-3 font-serif text-[2.9rem] leading-none text-ink min-[380px]:text-[3.4rem] sm:text-[4.2rem]">
             {formatScore(reviews.google.score)}<span class="ml-1 text-[1.3rem] text-muted">/{reviews.google.scale}</span>
           </p>
         </div>
         <dl class="col-span-2 grid grid-cols-3 bg-paper">
           {
             reviews.booking.categories.map((c, i) => (
-              <div class:list={['flex flex-col-reverse justify-end p-5 sm:p-7', i > 0 && 'border-l border-line']}>
-                <dt class="mt-2 text-[0.9rem] text-stone">{c.label}</dt>
+              <div class:list={['flex min-w-0 flex-col-reverse justify-end px-2 py-5 min-[360px]:px-3 min-[380px]:px-5 sm:p-7', i > 0 && 'border-l border-line']}>
+                <dt class="mt-2 text-[0.82rem] text-stone min-[380px]:text-[0.9rem]">{c.label}</dt>
                 <dd class="text-gold-metal-deep font-serif text-[1.9rem] leading-none sm:text-[2.3rem]">{formatScore(c.score)}</dd>
               </div>
             ))

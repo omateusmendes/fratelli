@@ -42,7 +42,9 @@ const sizes = '(min-width: 768px) 33vw, 100vw';
     }
   </div>
   <div class="flex flex-1 flex-col border-b border-line pb-6 pt-5">
-    <p class="eyebrow">{room.size} m² · até {room.guests} hóspedes</p>
+    <p class="eyebrow whitespace-nowrap md:!tracking-[0.14em] lg:!tracking-[0.24em] xl:!tracking-eyebrow">
+      {room.size} m² · até {room.guests} hóspedes
+    </p>
     <Heading class="mt-2.5 text-h3">
       <a href={href} class="after:absolute after:inset-0">
         {room.name}
