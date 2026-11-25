@@ -29,11 +29,14 @@ const suite = rooms.find((r) => r.featured);
 
 // Fotos do topo, com ponto de foco para afastar bordas pouco elegantes
 // (ar-condicionado, poltrona cortada) e conduzir o zoom lento.
-const heroFocus = ['64% 70%', '58% 62%'];
-const heroPhotos: Photo[] = [
-  ...(suite?.photos.slice(0, 2).map((p, i) => ({ ...p, focus: heroFocus[i] })) ?? []),
-  { ...commonPhotos.recepcao, focus: '62% 55%' },
+const deluxe = rooms.find((r) => r.slug === 'quarto-deluxe');
+// Topo da home: suíte 06 (cama), suíte 05 (banheira com janela) e Deluxe 02.
+const heroPicks: [Photo | undefined, string][] = [
+  [suite?.photos[0], '55% 60%'],
+  [suite?.photos[1], '58% 58%'],
+  [deluxe?.photos[0], '60% 60%'],
 ];
+const heroPhotos: Photo[] = heroPicks.flatMap(([photo, focus]) => (photo ? [{ ...photo, focus }] : []));
 
 const ratingLine = [
   `${formatScore(reviews.booking.score)} ${reviews.booking.platform}`,
@@ -59,7 +62,7 @@ const ratingLine = [
         interval={7000}
         zoom={1.12}
         zoomMode="in"
-        warm
+        vignette
         priority
         sizes="(min-width: 1024px) 62vw, 100vw"
       />

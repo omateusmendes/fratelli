@@ -25,6 +25,7 @@ Thumbs.db
 # materiais de referência do cliente (não fazem parte do site;
 # as versões tratadas e renomeadas estão em src/assets/)
 /FOTOS/
+/Novas Fotos/
 /*.pdf
 /Imagem do ChatGPT*.png
 /Logotipo Luxuoso*.png

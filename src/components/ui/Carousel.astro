@@ -23,8 +23,8 @@ interface Props {
   sizes?: string;
   /** Primeira foto com prioridade alta de carregamento (LCP). */
   priority?: boolean;
-  /** Tratamento de cor quente + vinheta, para harmonizar com o dourado. */
-  warm?: boolean;
+  /** Escurece suavemente as bordas da foto (vinheta), para fundos escuros. */
+  vignette?: boolean;
   /** Intensidade do zoom lento da foto ativa (1 = sem zoom). */
   zoom?: number;
   /** "out": a foto entra ampliada e se afasta; "in": aproximação contínua (efeito cinematográfico). */
@@ -40,7 +40,7 @@ const {
   delay = 0,
   sizes = '(min-width: 1024px) 58vw, 100vw',
   priority = false,
-  warm = false,
+  vignette = false,
   zoom = 1.06,
   zoomMode = 'out',
   class: className,
@@ -53,7 +53,7 @@ const multiple = total > 1;
 const full = variant === 'full' && multiple;
 const pad = (n: number) => String(n).padStart(2, '0');
 const widthsFor = (w: number) => {
-  const list = [480, 768, 1024, 1440].filter((x) => x < w);
+  const list = [480, 768, 1024, 1440, 1920].filter((x) => x < w);
   return [...list, w];
 };
 ---
@@ -61,7 +61,7 @@ const widthsFor = (w: number) => {
 <div
   class:list={[
     'carousel group/carousel relative isolate h-full w-full overflow-hidden',
-    warm ? 'carousel-warm bg-ink' : 'bg-sand',
+    vignette ? 'carousel-vignette bg-ink' : 'bg-sand',
     zoomMode === 'in' && 'carousel-zoom-in',
     className,
   ]}
@@ -233,20 +233,14 @@ const widthsFor = (w: number) => {
     }
   }
 
-  /* Tratamento quente: aproxima as fotos (luz fria de celular) do dourado da marca */
-  .carousel-warm .carousel-img {
-    filter: sepia(0.14) saturate(1.08) brightness(0.94) contrast(1.04);
-  }
-
-  .carousel-warm::after {
+  /* Vinheta suave nas bordas (sem alterar as cores das fotos profissionais) */
+  .carousel-vignette::after {
     content: '';
     position: absolute;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background:
-      radial-gradient(120% 95% at 60% 45%, transparent 45%, rgb(31 29 30 / 0.55) 100%),
-      linear-gradient(180deg, rgb(201 154 46 / 0.06), rgb(31 29 30 / 0.12));
+    background: radial-gradient(120% 95% at 60% 45%, transparent 50%, rgb(31 29 30 / 0.45) 100%);
   }
 
   .carousel-slide[data-active] .carousel-img {
