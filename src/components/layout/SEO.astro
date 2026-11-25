@@ -31,7 +31,7 @@ const {
   faq,
 } = Astro.props;
 
-const site = Astro.site ?? new URL('https://www.fratellipremiumhotel.com.br');
+const site = Astro.site ?? new URL(Astro.url.origin);
 const canonical = new URL(Astro.url.pathname, site).href;
 const ogImageUrl = new URL(ogImage, site).href;
 const homeUrl = new URL('/', site).href;

@@ -3,8 +3,23 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-// TODO(hotel): substituir pelo domínio definitivo antes do lançamento.
-const SITE_URL = process.env.SITE_URL ?? 'https://www.fratellipremiumhotel.com.br';
+/**
+ * Domínio público do site — usado no canonical, sitemap, robots.txt e nas
+ * URLs absolutas do OpenGraph (WhatsApp/redes buscam a imagem por essa URL).
+ * Ordem de prioridade:
+ * 1. SITE_URL (defina na Vercel/Coolify quando houver domínio definitivo)
+ * 2. Domínio de produção detectado automaticamente na Vercel ou no Coolify
+ * 3. Endereço local (apenas desenvolvimento)
+ */
+/** @param {string | undefined} host */
+const withProtocol = (host) => (host ? (host.startsWith('http') ? host : `https://${host}`) : undefined);
+const SITE_URL =
+  process.env.SITE_URL ||
+  withProtocol(process.env.VERCEL_PROJECT_PRODUCTION_URL) ||
+  withProtocol(process.env.VERCEL_URL) ||
+  withProtocol(process.env.COOLIFY_URL?.split(',')[0]) ||
+  withProtocol(process.env.COOLIFY_FQDN?.split(',')[0]) ||
+  'http://localhost:4321';
 
 export default defineConfig({
   site: SITE_URL,
