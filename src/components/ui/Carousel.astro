@@ -139,12 +139,12 @@ const widthsFor = (w: number) => {
         </button>
 
         <div class="absolute inset-x-4 bottom-4 flex items-center gap-4 sm:inset-x-6 sm:bottom-5">
-          <p class="font-serif text-[0.95rem] tabular-nums text-cream" aria-hidden="true">
+          <p class="shrink-0 whitespace-nowrap font-serif text-[0.95rem] tabular-nums text-cream" aria-hidden="true">
             <span data-current>01</span>
             <span class="text-cream/55"> / {pad(total)}</span>
           </p>
 
-          <div class="flex flex-1 items-center gap-1.5" role="group" aria-label="Escolher foto">
+          <div class="flex min-w-0 flex-1 items-center gap-1 sm:gap-1.5" role="group" aria-label="Escolher foto">
             {photos.map((_, i) => (
               <button
                 type="button"
@@ -290,9 +290,10 @@ const widthsFor = (w: number) => {
 
   .carousel-dot {
     display: flex;
-    flex: 1;
+    /* divide o espaço disponível entre os indicadores (cabe com 8 fotos no celular) */
+    flex: 1 1 0;
     max-width: 3.5rem;
-    min-width: 1.75rem;
+    min-width: 0;
     align-items: center;
     /* área de toque de 44px de altura, mantendo o fio fino */
     padding-block: 1.3125rem;
