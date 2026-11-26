@@ -7,13 +7,13 @@
 export const hotel = {
   name: 'Fratelli Premium Hotel',
   shortName: 'Fratelli',
-  tagline: 'Conforto e acolhimento no Centro de Elói Mendes',
+  tagline: 'Um local privilegiado e silencioso para o seu descanso',
   description:
-    'Hotel no Centro de Elói Mendes, Minas Gerais, com Quartos Duplos, Quartos Deluxe e Suíte com Hidromassagem, café da manhã, Wi-Fi e estacionamento gratuitos e recepção 24 horas.',
+    'Hotel em um bairro tranquilo de Elói Mendes, Minas Gerais, com Quartos Duplos, Quartos Deluxe e Suíte com Hidromassagem, café da manhã, Wi-Fi e estacionamento gratuitos e recepção 24 horas.',
 
   address: {
     street: 'Av. Belo Horizonte, 386',
-    district: 'Centro',
+    district: 'Jardim Paraíso',
     city: 'Elói Mendes',
     state: 'MG',
     stateName: 'Minas Gerais',
@@ -37,7 +37,8 @@ export const hotel = {
   },
 
   email: '', // TODO(hotel): e-mail oficial
-  instagram: '', // TODO(hotel): URL do Instagram oficial
+  instagram: 'https://www.instagram.com/fratellipremiumhotel/',
+  instagramHandle: '@fratellipremiumhotel',
 
   // TODO(hotel): link direto da ficha do hotel no Booking.com
   bookingUrl: 'https://www.booking.com/searchresults.pt-br.html?ss=Fratelli+Premium+Hotel+El%C3%B3i+Mendes',
@@ -49,10 +50,13 @@ export const hotel = {
   directionsUrl:
     'https://www.google.com/maps/dir/?api=1&destination=Fratelli+Premium+Hotel+Av.+Belo+Horizonte+386+El%C3%B3i+Mendes+MG',
 
-  // TODO(hotel): validar horários.
   schedule: {
-    checkIn: '15h às 18h',
-    checkOut: '12h às 12h30',
+    /** Para cartões e rótulos. */
+    checkIn: 'A partir das 15h',
+    checkOut: 'Até as 12h',
+    /** Para frases corridas (ex.: FAQ). */
+    checkInPhrase: 'a partir das 15h',
+    checkOutPhrase: 'até as 12h',
     checkInISO: '15:00',
     checkOutISO: '12:00',
     reception: '24 horas',

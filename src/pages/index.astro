@@ -20,7 +20,7 @@ import { homeFaq } from '@/data/faq';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
 
 const locationPoints: { icon: IconName; text: string }[] = [
-  { icon: 'map-pin', text: 'No Centro da cidade' },
+  { icon: 'map-pin', text: 'Bairro Jardim Paraíso, tranquilo e residencial' },
   { icon: 'car', text: 'Estacionamento privativo gratuito' },
   { icon: 'navigation', text: 'Prático para a região de Varginha' },
 ];
@@ -46,8 +46,8 @@ const ratingLine = [
 ---
 
 <BaseLayout
-  title="Fratelli Premium Hotel | Hotel no Centro de Elói Mendes, MG"
-  description="Hotel no Centro de Elói Mendes (MG): Quarto Duplo, Deluxe e Suíte com Hidromassagem, café da manhã, Wi-Fi e estacionamento gratuitos e recepção 24h."
+  title="Fratelli Premium Hotel | Hotel em Elói Mendes, MG"
+  description="Hotel em um bairro tranquilo de Elói Mendes (MG): Quarto Duplo, Deluxe e Suíte com Hidromassagem, café da manhã, Wi-Fi e estacionamento gratuitos e recepção 24h."
   hotelSchema
   faq={homeFaq}
 >
@@ -80,7 +80,7 @@ const ratingLine = [
           Seu descanso tem endereço em <span class="text-gold-metal">Elói&nbsp;Mendes.</span>
         </h1>
         <p class="mt-6 max-w-md text-lead text-cream/80">
-          Conforto, atendimento acolhedor e praticidade no Centro da cidade, no Sul de Minas.
+          Um local privilegiado e silencioso para o seu descanso, no Sul de Minas.
         </p>
         <div class="mt-10 flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:gap-8">
           <Button href={buildWhatsAppUrl()} icon="whatsapp" size="lg">Consultar disponibilidade</Button>
@@ -116,7 +116,7 @@ const ratingLine = [
         <Eyebrow>Bem-vindo ao Fratelli</Eyebrow>
         <h2 id="welcome-title" class="mt-6 text-h2">Sinta-se bem.<br />Sinta-se acolhido.</h2>
         <p class="mt-6 text-[1.08rem] text-stone">
-          No Centro de Elói Mendes, o Fratelli Premium Hotel reúne acomodações confortáveis, atendimento dedicado e
+          Em um bairro tranquilo de Elói Mendes, o Fratelli Premium Hotel reúne acomodações confortáveis, atendimento dedicado e
           os serviços essenciais para quem viaja a trabalho ou busca momentos de descanso.
         </p>
         <div class="mt-9">
@@ -208,7 +208,7 @@ const ratingLine = [
     <div class="container-site py-20 sm:py-24 lg:py-28">
       <div class="max-w-xl">
         <Eyebrow>Nossa localização</Eyebrow>
-        <h2 id="location-title" class="mt-6 text-h2 !text-cream">No Centro de Elói Mendes, perto do que importa.</h2>
+        <h2 id="location-title" class="mt-6 text-h2 !text-cream">Um local privilegiado e silencioso para o seu descanso.</h2>
         <address class="mt-8 font-serif text-[1.45rem] leading-snug not-italic text-cream sm:text-[1.6rem]">
           {hotel.address.street}<br />
           <span class="text-cream/60">{hotel.address.district} · {hotel.address.city}, {hotel.address.state}</span>

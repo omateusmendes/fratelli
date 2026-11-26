@@ -12,12 +12,12 @@ const roomsSummary = rooms.map((r) => `${r.name} (${r.beds}, ${r.size} m²)`).jo
 
 /**
  * Dúvidas frequentes — apenas informações do levantamento do hotel.
- * TODO(hotel): revisar horários e incluir políticas (pets, berços, camas extras) quando confirmadas.
+ * TODO(hotel): incluir políticas (pets, berços, camas extras) quando confirmadas.
  */
 export const faq: FaqItem[] = [
   {
     question: 'Quais são os horários de check-in e check-out?',
-    answer: `O check-in é das ${hotel.schedule.checkIn} e o check-out das ${hotel.schedule.checkOut}. Se precisar chegar ou sair fora desses horários, fale com a recepção com antecedência.`,
+    answer: `O check-in é ${hotel.schedule.checkInPhrase} e o check-out ${hotel.schedule.checkOutPhrase}. Se precisar chegar ou sair fora desses horários, fale com a recepção com antecedência.`,
     featured: true,
   },
   {
@@ -51,7 +51,7 @@ export const faq: FaqItem[] = [
   },
   {
     question: 'Onde fica o hotel?',
-    answer: `Na ${hotel.address.street.replace('Av.', 'Avenida')}, no Centro de Elói Mendes (MG). Uma localização prática para quem visita a cidade e a região de Varginha.`,
+    answer: `Na ${hotel.address.street.replace('Av.', 'Avenida')}, no bairro Jardim Paraíso, uma região tranquila de Elói Mendes (MG). Um local silencioso para descansar, com acesso prático à cidade e à região de Varginha.`,
   },
   {
     question: 'O hotel tem elevador e acessibilidade?',

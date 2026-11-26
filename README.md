@@ -67,11 +67,13 @@ Busque por `TODO(hotel)` no código. Antes do lançamento, confirmar:
 
 - [ ] WhatsApp oficial da recepção (hoje usa (35) 99972-9999)
 - [ ] Link direto da ficha no Booking (hoje usa uma busca)
-- [ ] E-mail, Instagram e CEP (os campos aparecem automaticamente quando preenchidos)
+- [x] Instagram (@fratellipremiumhotel) e bairro (Jardim Paraíso)
+- [ ] E-mail e CEP (os campos aparecem automaticamente quando preenchidos)
 - [ ] Domínio definitivo (`SITE_URL` e `robots.txt`) e coordenadas exatas do mapa
 - [ ] Diferenças entre as variantes dos quartos Duplo e Deluxe (climatização, varanda, térreo, camas)
 - [ ] Café da manhã incluso e jantar no restaurante (`flags.breakfastIncluded`, `flags.showDinner`)
-- [ ] Horários de check-in e check-out
+- [x] Horários: check-in a partir das 15h e check-out às 12h
+- [ ] Atualizar a arte do OpenGraph (`public/og-image.jpg`), que ainda cita "Centro" no endereço
 - [ ] Políticas: pets, berços, camas extras e taxas (`flags.showPolicies`)
 - [ ] Notas e quantidade de avaliações atualizadas (`reviews.ts`; com `reviewCount` preenchido, o JSON-LD passa a incluir `aggregateRating`)
 - [ ] Revisar as respostas da FAQ em `src/data/faq.ts` e incluir políticas (pets, berços, camas extras)

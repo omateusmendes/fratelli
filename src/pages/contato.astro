@@ -22,8 +22,16 @@ const channels: Channel[] = [
   { icon: 'whatsapp', label: 'WhatsApp da recepção', value: hotel.phone.display, href: buildWhatsAppUrl(), external: true },
   { icon: 'phone', label: 'Telefone', value: hotel.phone.display, href: `tel:${hotel.phone.e164}` },
   ...(hotel.email ? [{ icon: 'mail' as const, label: 'E-mail', value: hotel.email, href: `mailto:${hotel.email}` }] : []),
+  ...(hotel.instagram
+    ? [{ icon: 'instagram' as const, label: 'Instagram', value: hotel.instagramHandle, href: hotel.instagram, external: true }]
+    : []),
   { icon: 'star', label: 'Reserva online', value: 'Ver disponibilidade no Booking', href: hotel.bookingUrl, external: true },
-  { icon: 'map-pin', label: 'Endereço', value: `${hotel.address.street} · ${hotel.address.city}, ${hotel.address.state}`, href: '/localizacao/' },
+  {
+    icon: 'map-pin',
+    label: 'Endereço',
+    value: `${hotel.address.street} · ${hotel.address.district} · ${hotel.address.city}, ${hotel.address.state}`,
+    href: '/localizacao/',
+  },
 ];
 
 const schedule = [
@@ -35,7 +43,7 @@ const schedule = [
 
 <BaseLayout
   title="Contato e reservas | Fratelli Premium Hotel — Elói Mendes, MG"
-  description="Consulte disponibilidade no Fratelli Premium Hotel pelo WhatsApp, telefone (35) 99972-9999 ou Booking. Av. Belo Horizonte, 386, Centro, Elói Mendes (MG)."
+  description="Consulte disponibilidade no Fratelli Premium Hotel pelo WhatsApp, telefone (35) 99972-9999 ou Booking. Av. Belo Horizonte, 386, Jardim Paraíso, Elói Mendes (MG)."
   breadcrumb="Contato"
   faq={faq}
 >
